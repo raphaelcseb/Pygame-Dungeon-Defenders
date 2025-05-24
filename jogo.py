@@ -4,6 +4,7 @@ from pygame import mixer
 from pathlib import Path
 
 pygame.init()
+pygame.mixer.init()
 
 info = pygame.display.Info()
 tela_largura = info.current_w
@@ -90,6 +91,9 @@ coin_img = pygame.image.load(get_relative_dir('Obstacles/coin.png'))
 coin_img = pygame.transform.scale(coin_img, (32, 32))
 barrel_img = pygame.image.load(get_relative_dir('Obstacles/barrel.png'))
 barrel_img = pygame.transform.scale(barrel_img, (64, 64))
+
+pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3')
+pygame.mixer.music.set_volume(0.4)
 
 def load_orc_frames(sheet, frame_width=64, frame_height=64, scale=4, rows=4, cols=6):
     directions = ['down', 'up', 'left', 'right']
