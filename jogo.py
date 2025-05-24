@@ -70,3 +70,18 @@ orc3_hurt_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc
 orc3_attack_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc3_attack_full.png'))
 orc3_body_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc3_walk_full.png'))
 orc3_death_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc3_death_full.png'))
+
+vampiro1_walk_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires1_Walk_full.png'))
+vampiro1_attack_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires1_Attack_full.png'))
+vampiro1_hurt_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires1_Hurt_full.png'))
+vampiro1_death_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires1_Death_full.png'))
+
+vampiro2_walk_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires2_Walk_full.png'))
+vampiro2_attack_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires2_Attack_full.png'))
+vampiro2_hurt_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires2_Hurt_full.png'))
+vampiro2_death_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires2_Death_full.png'))
+
+vampiro3_walk_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires3_Walk_full.png'))
+vampiro3_attack_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires3_Attack_full.png'))
+vampiro3_hurt_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires3_Hurt_full.png'))
+vampiro3_death_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires3_Death_full.png'))
