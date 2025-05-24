@@ -85,3 +85,9 @@ vampiro3_walk_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampir
 vampiro3_attack_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires3_Attack_full.png'))
 vampiro3_hurt_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires3_Hurt_full.png'))
 vampiro3_death_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/Vampires3_Death_full.png'))
+
+coin_img = pygame.image.load(get_relative_dir('Obstacles/coin.png'))
+coin_img = pygame.transform.scale(coin_img, (32, 32))
+barrel_img = pygame.image.load(get_relative_dir('Obstacles/barrel.png'))
+barrel_img = pygame.transform.scale(barrel_img, (64, 64))
+
