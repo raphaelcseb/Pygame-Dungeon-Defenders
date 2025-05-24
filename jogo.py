@@ -129,3 +129,37 @@ def load_attack_frames(sheet, frame_width=64, frame_height=64, rows=4, cols=8, s
             scaled = pygame.transform.scale(frame, (frame_width * scale, frame_height * scale))
             frames[dir].append(scaled)
     return frames
+
+player_attack_frames = load_attack_frames(player_attack_sheet)
+player_hurt_frames = load_attack_frames(player_hurt_sheet, frame_width=64, frame_height=64, rows=4, cols=5, scale=4)
+player_death_frames = load_attack_frames(player_death_sheet, frame_width=64, frame_height=64, rows=4, cols=7, scale=4)
+
+orc1_attack_frames = load_orc_frames(orc1_attack_sprite_sheet)
+orc1_body_frames = load_orc_frames(orc1_body_sprite_sheet)
+orc1_hurt_frames = load_orc_frames(orc1_hurt_sprite_sheet)
+orc1_death_frames = load_orc_frames(orc1_death_sprite_sheet)
+
+orc2_attack_frames = load_orc_frames(orc2_attack_sprite_sheet)
+orc2_body_frames = load_orc_frames(orc2_body_sprite_sheet)
+orc2_hurt_frames = load_orc_frames(orc2_hurt_sprite_sheet)
+orc2_death_frames = load_orc_frames(orc2_death_sprite_sheet)
+
+orc3_attack_frames = load_orc_frames(orc3_attack_sprite_sheet)
+orc3_body_frames = load_orc_frames(orc3_body_sprite_sheet)
+orc3_hurt_frames = load_orc_frames(orc3_hurt_sprite_sheet)
+orc3_death_frames = load_orc_frames(orc3_death_sprite_sheet)
+
+vampiro1_walk_frames = load_orc_frames(vampiro1_walk_sheet)
+vampiro1_attack_frames = load_orc_frames(vampiro1_attack_sheet)
+vampiro1_hurt_frames = load_orc_frames(vampiro1_hurt_sheet, cols=4)
+vampiro1_death_frames = load_orc_frames(vampiro1_death_sheet, cols=11)
+
+vampiro2_walk_frames = load_orc_frames(vampiro2_walk_sheet)
+vampiro2_attack_frames = load_orc_frames(vampiro2_attack_sheet)
+vampiro2_hurt_frames = load_orc_frames(vampiro2_hurt_sheet, cols=4)
+vampiro2_death_frames = load_orc_frames(vampiro2_death_sheet, cols=11)
+
+vampiro3_walk_frames = load_orc_frames(vampiro3_walk_sheet)
+vampiro3_attack_frames = load_orc_frames(vampiro3_attack_sheet)
+vampiro3_hurt_frames = load_orc_frames(vampiro3_hurt_sheet, cols=4)
+vampiro3_death_frames = load_orc_frames(vampiro3_death_sheet, cols=11)
