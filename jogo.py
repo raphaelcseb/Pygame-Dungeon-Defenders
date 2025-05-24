@@ -55,3 +55,18 @@ flecha_esquerda = pygame.transform.scale(flecha_esquerda, (70, 46))
 
 flecha_direita = pygame.image.load(get_relative_dir('Obstacles/flecha_direita.png')).convert_alpha()
 flecha_direita = pygame.transform.scale(flecha_direita, (70, 46))
+
+orc1_hurt_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc1_hurt_full.png'))
+orc1_attack_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc1_attack_full.png'))
+orc1_body_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc1_walk_full.png'))
+orc1_death_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc1_death_full.png'))
+
+orc2_hurt_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc2_hurt_full.png'))
+orc2_attack_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc2_attack_full.png'))
+orc2_body_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc2_walk_full.png'))
+orc2_death_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc2_death_full.png'))
+
+orc3_hurt_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc3_hurt_full.png'))
+orc3_attack_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc3_attack_full.png'))
+orc3_body_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc3_walk_full.png'))
+orc3_death_sprite_sheet = pygame.image.load(get_relative_dir('Animation/Enemy/orc3_death_full.png'))
