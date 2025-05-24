@@ -167,3 +167,63 @@ vampiro3_walk_frames = load_orc_frames(vampiro3_walk_sheet)
 vampiro3_attack_frames = load_orc_frames(vampiro3_attack_sheet)
 vampiro3_hurt_frames = load_orc_frames(vampiro3_hurt_sheet, cols=4)
 vampiro3_death_frames = load_orc_frames(vampiro3_death_sheet, cols=11)
+
+class DroppedItem:
+    def __init__(self, x, y, item_type,falling=False):
+        self.x = x
+        self.y = y
+        self.type = item_type
+        self.spawn_time = pygame.time.get_ticks()
+        self.blink_timer = 0
+        self.visible = True
+        self.health = 2 if item_type == "barrel" else 1
+        self.invulnerable_until = pygame.time.get_ticks() + 2000
+        self.rect = pygame.Rect(x, y, 32, 32) if item_type == "coin" else pygame.Rect(x, y, 64, 64)
+        self.falling = False
+        self.fall_speed = 3
+        self.stop_y = screen_height - 200
+        self.falling = falling
+
+    def update(self):
+        current_time = pygame.time.get_ticks()
+        lifetime = current_time - self.spawn_time
+
+        if self.type == "coin" and self.falling:
+            self.y += self.fall_speed
+            if self.y >= self.stop_y:
+                self.y = self.stop_y
+                self.falling = False
+
+        self.rect.topleft = (self.x, self.y)
+
+        if self.type == "coin":
+            if lifetime > 9000:
+                self.blink_timer += pygame.time.get_ticks() - (self.spawn_time + 3000)
+                if self.blink_timer > 200:
+                    self.visible = not self.visible
+                    self.blink_timer = 0
+            return lifetime < 11000
+
+        elif self.type == "barrel":
+            return True
+
+    
+    def take_damage(self):
+        if pygame.time.get_ticks() < self.invulnerable_until:
+            return False
+        self.health -= 1
+        self.invulnerable_until = pygame.time.get_ticks() + 300  
+        return self.health <= 0
+
+
+    def draw(self, surface, show_hitbox=False):
+        if not self.visible and self.type == "coin":
+            return
+
+        if self.type == "coin":
+            surface.blit(coin_img, self.rect.topleft)
+        elif self.type == "barrel":
+            surface.blit(barrel_img, self.rect.topleft)
+
+        if show_hitbox:
+            pygame.draw.rect(surface, (0, 255, 0), self.rect, 2)
