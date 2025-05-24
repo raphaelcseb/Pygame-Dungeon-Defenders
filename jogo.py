@@ -91,3 +91,41 @@ coin_img = pygame.transform.scale(coin_img, (32, 32))
 barrel_img = pygame.image.load(get_relative_dir('Obstacles/barrel.png'))
 barrel_img = pygame.transform.scale(barrel_img, (64, 64))
 
+def load_orc_frames(sheet, frame_width=64, frame_height=64, scale=4, rows=4, cols=6):
+    directions = ['down', 'up', 'left', 'right']
+    frames = {dir: [] for dir in directions}
+    for y, dir in enumerate(directions):
+        for x in range(cols):
+            try:
+                frame = sheet.subsurface(pygame.Rect(x * frame_width, y * frame_height, frame_width, frame_height))
+                scaled_frame = pygame.transform.scale(frame, (frame_width * scale, frame_height * scale))
+                frames[dir].append(scaled_frame)
+            except Exception as e:
+                debug_frame = pygame.Surface((frame_width * scale, frame_height * scale))
+                debug_frame.fill((255, 0, 0))
+                frames[dir].append(debug_frame)
+    return frames
+
+
+def load_player_sprites(sheet, frame_width, frame_height, scale=2):
+    directions = ['down', 'left', 'right', 'up']
+    sprites = {dir: [] for dir in directions}
+    for y, dir in enumerate(directions):
+        for x in range(3):
+            frame = sheet.subsurface(pygame.Rect(x * frame_width, y * frame_height, frame_width, frame_height))
+            scaled_frame = pygame.transform.scale(frame, (frame_width * scale, frame_height * scale))
+            sprites[dir].append(scaled_frame)
+    return sprites
+
+player_sprites = load_player_sprites(player_sheet, 64, 64, scale=4)
+
+
+def load_attack_frames(sheet, frame_width=64, frame_height=64, rows=4, cols=8, scale=4):
+    directions = ['down', 'left', 'right', 'up']
+    frames = {dir: [] for dir in directions}
+    for y, dir in enumerate(directions):
+        for x in range(cols):
+            frame = sheet.subsurface(pygame.Rect(x * frame_width, y * frame_height, frame_width, frame_height))
+            scaled = pygame.transform.scale(frame, (frame_width * scale, frame_height * scale))
+            frames[dir].append(scaled)
+    return frames
