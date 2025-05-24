@@ -21,3 +21,37 @@ faixas_x = [i * largura_faixa + largura_faixa // 2 for i in range(num_faixas)]
 my_font = pygame.font.Font(get_relative_dir('Font/BACKTO1982.TTF'), 32)
 my_font_start = pygame.font.Font(get_relative_dir('Font/BACKTO1982.TTF'), 20)
 small_font = pygame.font.Font(get_relative_dir('Font/BACKTO1982.TTF'), 10)
+
+
+text_surface = my_font.render('Jogo de Desoft', False, (255, 255, 255))
+text_start = my_font_start.render('Press SPACE to start Game', False, (255, 255, 255))
+start_esc = my_font_start.render('ESC', False, (255, 255, 255))
+tutorial_title = my_font.render('Tutorial', False, (255, 255, 255))
+tutorial_text_1 = my_font_start.render('BAD - LOSE HP', False, (255, 255, 255))
+tutorial_text_2 = my_font_start.render('GET COINS $$$', False, (255, 255, 255))
+avatar_title = my_font.render('Avatar', False, (255, 255, 255))
+game_title = my_font.render('Game', False, (255, 255, 255))
+
+tela_de_inicio = pygame.image.load(get_relative_dir('Level maps/fundo.png'))
+tela_de_inicio = pygame.transform.scale(tela_de_inicio, (screen_width, screen_height))
+castle_overlay = pygame.image.load(get_relative_dir('Level maps/castle overlay.png')).convert_alpha()
+castle_overlay = pygame.transform.scale(castle_overlay, (screen_width, screen_height))
+background_img = pygame.image.load(get_relative_dir('Level maps/game map.png'))
+background_img = pygame.transform.scale(background_img, (screen_width, screen_height))
+
+player_sheet = pygame.image.load(get_relative_dir('Animation/jogador/Sword_Walk_full.png'))
+player_attack_sheet = pygame.image.load(get_relative_dir('Animation/jogador/Sword_attack_full.png'))
+player_hurt_sheet = pygame.image.load(get_relative_dir('Animation/jogador/Sword_Hurt_full.png'))
+player_death_sheet = pygame.image.load(get_relative_dir('Animation/jogador/Sword_Death_full.png'))
+
+flecha_cima = pygame.image.load(get_relative_dir('Obstacles/flecha_cima.png')).convert_alpha()
+flecha_cima = pygame.transform.scale(flecha_cima, (46, 70))
+
+flecha_baixo = pygame.image.load(get_relative_dir('Obstacles/flecha_baixo.png')).convert_alpha()
+flecha_baixo = pygame.transform.scale(flecha_baixo, (46, 70))
+
+flecha_esquerda = pygame.image.load(get_relative_dir('Obstacles/flecha_esquerda.png')).convert_alpha()
+flecha_esquerda = pygame.transform.scale(flecha_esquerda, (70, 46))
+
+flecha_direita = pygame.image.load(get_relative_dir('Obstacles/flecha_direita.png')).convert_alpha()
+flecha_direita = pygame.transform.scale(flecha_direita, (70, 46))
