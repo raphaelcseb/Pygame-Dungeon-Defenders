@@ -83,11 +83,23 @@ imagem_barril = pygame.image.load(direcao_relativa('Obstacles/barrel.png'))
 imagem_barril = pygame.transform.scale(imagem_barril, (64, 64))
 
 #Carregando os sons do jogo
-pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Múscia de fundo em loop 
+
+def tocar_overworld():
+    pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Música de fundo em loop 
+    pygame.mixer.music.play(loops=-1)
+def tocar_boss():
+    pygame.mixer.music.fadeout(1000)
+    pygame.mixer.music.load('Sons\Boss_fight_zelda.mp3') #Música de fundo em loop 
+    pygame.mixer.music.play(loops=-1)
+def parar_musica_boss():
+    pygame.mixer.music.fadeout(1000)
+    pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Música de fundo em loop 
+    pygame.mixer.music.play(loops=-1)
+
 pygame.mixer.music.set_volume(0.4)
 espada_som = pygame.mixer.Sound('Sons\sword_cut.mp3')
 som_compra = pygame.mixer.Sound('Sons\purchase_sound.mp3')
-
+hit_orc_som = pygame.mixer.Sound('Sons\orc_hit.mp3')
 
 
 
