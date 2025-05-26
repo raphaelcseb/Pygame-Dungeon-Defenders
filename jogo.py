@@ -4,6 +4,7 @@ from pygame import mixer
 from pathlib import Path
 
 pygame.init()
+pygame.mixer.init()
 
 info = pygame.display.Info()
 tela_largura = info.current_w
@@ -81,8 +82,14 @@ imagem_moeda = pygame.transform.scale(imagem_moeda, (32, 32))
 imagem_barril = pygame.image.load(direcao_relativa('Obstacles/barrel.png'))
 imagem_barril = pygame.transform.scale(imagem_barril, (64, 64))
 
-pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3')
+#Carregando os sons do jogo
+pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Múscia de fundo em loop 
 pygame.mixer.music.set_volume(0.4)
+espada_som = pygame.mixer.Sound('Sons\sword_cut.mp3')
+som_compra = pygame.mixer.Sound('Sons\purchase_sound.mp3')
+
+
+
 
 def carrega_orc_frames(sheet, largura_frame=64, altura_frame=64, escala=4, linhas=4, colunas=6):
     direcoes = ['down', 'up', 'left', 'right']
