@@ -227,3 +227,135 @@ class DroppedItem:
 
         if show_hitbox:
             pygame.draw.rect(surface, (0, 255, 0), self.rect, 2)
+
+class OrcBase:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.frame_index = 0
+        self.current_frames = self.walk_frames
+        self.frame_delay = 0.3
+        self.frame_timer = 0
+        self.parado = False
+        self.atacando = False
+        self.hurt = False
+        self.hurt_timer = 0
+        self.hurt_duration = 500
+        self.morto = False
+        self.death_timer = 0
+        self.death_duration = 1000
+        self.death_animation_complete = False
+        self.direcao = 'down'
+        self.ultimo_ataque_castelo = 0
+        self.intervalo_ataque_castelo = 1000
+
+
+
+    def update(self, dt, player_pos):
+        if self.morto:
+            self.frame_timer += dt
+            if self.frame_timer >= self.frame_delay:
+                direcao_frames = self.current_frames.get(self.direcao, list(self.current_frames.values())[0])
+                if self.frame_index < len(direcao_frames) - 1:
+                    self.frame_index += 1
+                    self.frame_timer = 0
+                else:
+                    self.death_animation_complete = True
+            return
+
+        if getattr(self, "post_special_block", False):
+            return
+
+
+        if self.morto:
+            self.frame_timer += dt
+            if self.frame_timer >= self.frame_delay:
+                direcao_frames = self.current_frames.get(self.direcao, list(self.current_frames.values())[0])
+                if self.frame_index < len(direcao_frames) - 1:
+                    self.frame_index += 1
+                    self.frame_timer = 0
+                else:
+                    self.death_animation_complete = True
+            return
+
+        if self.hurt:
+            if pygame.time.get_ticks() - self.hurt_timer > self.hurt_duration:
+                self.hurt = False
+                self.set_animacao("andar")
+
+        if not self.parado:
+            player_x, player_y = player_pos
+            dist_x = player_x - self.x
+            dist_y = player_y - self.y
+            distancia = (dist_x**2 + dist_y**2) ** 0.5
+
+            if distancia < getattr(self, 'follow_range', 1000):
+                norm_x = dist_x / distancia
+                norm_y = dist_y / distancia
+                self.x += norm_x * self.speed
+                self.y += norm_y * self.speed
+
+                if abs(dist_y) > abs(dist_x):
+                    self.direcao = 'down' if dist_y > 0 else 'up'
+                else:
+                    self.direcao = 'right' if dist_x > 0 else 'left'
+            else:
+                self.y += self.speed
+                self.direcao = 'down'
+
+            if self.y > screen_height - 325:
+                self.y = screen_height - 325
+                agora = pygame.time.get_ticks()
+                if not self.parado:
+                    self.set_animacao("atacar")
+                    self.parado = True
+
+                if agora - self.ultimo_ataque_castelo >= self.intervalo_ataque_castelo:
+                    GameState.castle_HP -= self.damage
+                    self.ultimo_ataque_castelo = agora
+
+                    if GameState.castle_HP <= 0:
+                        GameState.player_dead = True
+                        GameState.player_death_timer = pygame.time.get_ticks()
+
+        self.frame_timer += dt
+        if self.frame_timer >= self.frame_delay:
+            self.frame_index = (self.frame_index + 1) % len(self.current_frames[self.direcao])
+            self.frame_timer = 0
+
+
+
+    def draw(self, surface, show_hitbox=False):
+        frame_list = self.current_frames.get(self.direcao) or list(self.current_frames.values())[0]
+        frame = frame_list[int(self.frame_index)]
+
+        if self.hurt and not self.morto:
+            temp_surface = pygame.Surface((frame.get_width(), frame.get_height()), pygame.SRCALPHA)
+            temp_surface.blit(frame, (0, 0))
+            temp_surface.fill((255, 0, 0, 100), special_flags=pygame.BLEND_MULT)
+            surface.blit(temp_surface, (self.x, self.y))
+        else:
+            surface.blit(frame, (self.x, self.y))
+
+        if show_hitbox:
+            rect = pygame.Rect(self.x + 64, self.y + 64, 128, 128)
+            pygame.draw.rect(surface, (0, 255, 0), rect, 2)
+
+
+    def set_animacao(self, tipo):
+        if self.morto:
+            return
+
+        if tipo == "andar":
+            self.current_frames = self.walk_frames
+        elif tipo == "atacar":
+            self.current_frames = self.attack_frames
+        elif tipo == "hurt":
+            self.current_frames = self.hurt_frames
+            self.hurt = True
+            self.hurt_timer = pygame.time.get_ticks()
+        elif tipo == "morrer":
+            self.current_frames = self.death_frames
+            self.morto = True
+            self.frame_index = 0
+            self.death_timer = pygame.time.get_ticks()
