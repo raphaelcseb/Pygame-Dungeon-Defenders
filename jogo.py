@@ -167,3 +167,48 @@ vampiro3_walk_frames = load_orc_frames(vampiro3_walk_sheet)
 vampiro3_attack_frames = load_orc_frames(vampiro3_attack_sheet)
 vampiro3_hurt_frames = load_orc_frames(vampiro3_hurt_sheet, cols=4)
 vampiro3_death_frames = load_orc_frames(vampiro3_death_sheet, cols=11)
+
+class Orc1Enemy(OrcBase):
+    def __init__(self, x, y):
+        self.speed = 2
+        self.hurt_frames = orc1_hurt_frames
+        self.walk_frames = orc1_body_frames
+        self.attack_frames = orc1_attack_frames
+        self.death_frames = orc1_death_frames
+        self.hp = 2
+        self.damage = 10
+        self.type = "orc1"
+        self.follow_range = 300
+        super().__init__(x, y)
+
+class Orc2Enemy(OrcBase):
+    def __init__(self, x, y):
+        self.speed = 4
+        self.hurt_frames = orc2_hurt_frames
+        self.walk_frames = orc2_body_frames
+        self.attack_frames = orc2_attack_frames
+        self.death_frames = orc2_death_frames
+        self.hp = 1
+        self.damage = 8
+        self.type = "orc2"
+        self.follow_range = 300
+        super().__init__(x, y)
+
+    def on_death(self):
+        return DroppedItem(self.x + 112, self.y + 112, "coin")
+
+class Orc3Enemy(OrcBase):
+    def __init__(self, x, y):
+        self.speed = 3
+        self.hurt_frames = orc3_hurt_frames
+        self.walk_frames = orc3_body_frames
+        self.attack_frames = orc3_attack_frames
+        self.death_frames = orc3_death_frames
+        self.hp = 3
+        self.damage = 12
+        self.type = "orc3"
+        self.follow_range = 300
+        super().__init__(x, y)
+
+    def on_death(self):
+        return DroppedItem(self.x + 96, self.y + 96, "barrel")
