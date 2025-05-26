@@ -557,3 +557,43 @@ def gerar_orcs_em_faixas(qtd=3):
         orcs.append(orc)
     return orcs
 
+class GameState:
+    player_start_y = screen_height - 150
+    total_money = 0
+    player_collide = False
+    HP = 350
+    max_HP = 350
+    game_start_screen = True
+    game_screen = False
+    no_collide = True
+    obstacle_speed = 2.4
+    score = 0
+    coins_gained = 0
+    flechas = 0
+    start_time = 0
+    dano_timer = 0
+    wave = 1
+    wave_cooldown = 3000
+    wave_timer = 0
+    wave_message_timer = 0
+    show_wave_message = False
+    arma = 'espada'
+    player_speed = 5
+    sword_range = 60
+    attacking = False
+    attack_frame_index = 0
+    attack_timer = 0
+    attack_duration = 500
+    player_hurt = False
+    player_hurt_timer = 0
+    player_hurt_duration = 500
+    player_dead = False
+    player_death_timer = 0
+    player_death_duration = 2000
+    player_death_frame_index = 0
+    player_hurt_frame_index = 0
+    player_hurt_frame_timer = 0
+    player_hurt_frame_delay = 0.2
+    castle_HP = 2000
+    castle_max_HP = 2000
+    immune_to_explosions = False
