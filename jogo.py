@@ -404,3 +404,131 @@ class Orc3Enemy(OrcBase):
 
     def on_death(self):
         return DroppedItem(self.x + 96, self.y + 96, "barrel")
+
+class VampiroBoss(OrcBase):
+    def __init__(self, x, y, walk_frames, attack_frames, hurt_frames, death_frames, level=1):
+        self.walk_frames = walk_frames
+        self.attack_frames = attack_frames
+        self.hurt_frames = hurt_frames
+        self.death_frames = death_frames
+        self.hp = 30 + level * 10
+        self.max_hp = self.hp
+        self.damage = 20 + level * 5
+        self.type = f"vampiro{level}"
+        self.speed = 1 + level * 0.2
+        super().__init__(x, y)
+        self.level = level
+        self.special_attack_lines = []        
+        self.special_attack_phase = 0
+        self.last_attack_time = pygame.time.get_ticks()
+        self.special_attack_interval = 500
+        self.special_attack_cooldown = 8000 
+        self.in_attack_sequence = False
+        self.post_attack_delay = 2500
+        self.post_attack_timer = 0
+        self.special_attack_timer = pygame.time.get_ticks()
+        self.post_special_block = False
+        self.post_special_block_timer = 0
+        self.post_special_block_duration = 2500
+        self.follow_range = 150000
+        
+    def on_death(self):
+        return DroppedItem(self.x + 112, self.y + 112, "coin")
+
+
+
+    def cast_circle_attack(self, offset_angle=0):
+        for angle in range(offset_angle, 360 + offset_angle, 30):
+            direction = pygame.math.Vector2(1, 0).rotate(angle)
+            projectile = {
+                'x': self.x + 128,
+                'y': self.y + 128,
+                'dx': direction.x * 8,
+                'dy': direction.y * 8,
+                'timer': pygame.time.get_ticks(),
+                'damage': 10 + self.level * 5,
+                'ignora_imunidade': True 
+            }
+            special_effects.append(projectile)
+
+    def handle_special_attack(self):
+        now = pygame.time.get_ticks()
+
+        if self.post_special_block and now - self.post_special_block_timer >= self.post_special_block_duration:
+            self.post_special_block = False
+
+        if self.in_attack_sequence:
+            if self.special_attack_phase < 3 and now - self.last_attack_time >= self.special_attack_interval:
+                offset = 0 if self.special_attack_phase % 2 == 0 else 15
+                self.cast_circle_attack(offset_angle=offset)
+                self.last_attack_time = now
+                self.special_attack_phase += 1
+
+                if self.special_attack_phase == 3:
+                    self.post_attack_timer = now
+                    self.parado = True
+
+                    self.post_special_block = True
+                    self.post_special_block_timer = now
+
+
+            elif self.special_attack_phase == 3 and now - self.post_attack_timer >= self.post_attack_delay:
+                self.in_attack_sequence = False
+                self.special_attack_timer = now
+                self.parado = False
+
+                self.post_special_block = True
+                self.post_special_block_timer = now
+
+        elif now - self.special_attack_timer >= self.special_attack_cooldown:
+            self.special_attack_phase = 0
+            self.in_attack_sequence = True
+            self.last_attack_time = now
+
+
+    def draw_health_bar(self, surface):
+        bar_width = 600
+        bar_height = 25
+        bar_x = screen_width // 2 - bar_width // 2
+        bar_y = 20
+        pygame.draw.rect(surface, (255, 255, 255), (bar_x - 2, bar_y - 2, bar_width + 4, bar_height + 4))
+        filled = int((self.hp / self.max_hp) * bar_width)
+        pygame.draw.rect(surface, (221, 160, 221), (bar_x, bar_y, filled, bar_height))
+    
+    def draw_special_attack(self, surface):
+        for line in self.special_attack_lines:
+            pygame.draw.line(
+                surface, 
+                (255, 0, 0),
+                (line['start_x'], line['start_y']),
+                (line['end_x'], line['end_y']),
+                3
+            )
+
+class Vampiro1Boss(VampiroBoss):
+    def __init__(self, x, y):
+        super().__init__(x, y,
+                         vampiro1_walk_frames,
+                         vampiro1_attack_frames,
+                         vampiro1_hurt_frames,
+                         vampiro1_death_frames,
+                         level=1)
+
+class Vampiro2Boss(VampiroBoss):
+    def __init__(self, x, y):
+        super().__init__(x, y,
+                         vampiro2_walk_frames,
+                         vampiro2_attack_frames,
+                         vampiro2_hurt_frames,
+                         vampiro2_death_frames,
+                         level=2)
+
+
+class Vampiro3Boss(VampiroBoss):
+    def __init__(self, x, y):
+        super().__init__(x, y,
+                         vampiro3_walk_frames,
+                         vampiro3_attack_frames,
+                         vampiro3_hurt_frames,
+                         vampiro3_death_frames,
+                         level=3)
