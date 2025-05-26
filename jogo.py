@@ -532,3 +532,28 @@ class Vampiro3Boss(VampiroBoss):
                          vampiro3_hurt_frames,
                          vampiro3_death_frames,
                          level=3)
+
+def gerar_orcs_em_faixas(qtd=3):
+    orcs = []
+    for _ in range(qtd):
+        faixa = random.choice(faixas_x)
+        x = faixa - 128
+        y = random.randint(-600, -100)
+        x = max(0, min(x, screen_width - 256))
+
+        tipo_orc = random.choices(
+            ['orc1', 'orc2', 'orc3'],
+            weights=[0.5, 0.3, 0.2],
+            k=1
+        )[0]
+
+        if tipo_orc == 'orc1':
+            orc = Orc1Enemy(x, y)
+        elif tipo_orc == 'orc2':
+            orc = Orc2Enemy(x, y)
+        elif tipo_orc == 'orc3':
+            orc = Orc3Enemy(x, y)
+
+        orcs.append(orc)
+    return orcs
+
