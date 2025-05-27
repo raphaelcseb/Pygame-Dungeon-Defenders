@@ -716,3 +716,167 @@ def game():
     estado_de_jogo.velocidade_player = 5
 
     pygame.mixer.music.play(loops=-1)
+
+    while funcionando:
+        if estado_de_jogo.player_morto:
+            if pygame.time.get_ticks() - estado_de_jogo.player_morto_timer >= estado_de_jogo.player_morto_duracao:
+                game_over_tela()
+                return
+            else:
+                dt = relogio.tick(60) / 1000
+                tela.blit(imagem_de_fundo, (0, 0))
+                frame = player_frames_morte[player_dir][estado_de_jogo.player_morto_frame_index]
+                if estado_de_jogo.imune_a_explosao:
+                    raio_aura = 80
+                    aura_superficie = pygame.Surface((raio_aura * 2, raio_aura * 2), pygame.SRCALPHA)
+                    pygame.draw.circle(aura_superficie, (255, 255, 0, 40), (raio_aura, raio_aura), raio_aura - 5)
+                    tela.blit(aura_superficie, (centro_x - raio_aura, centro_y - raio_aura))
+
+                HUD(tela)
+                pygame.display.flip()
+                continue
+
+        dt = relogio.tick(60) / 1000
+        if pygame.time.get_ticks() - ultimo_spawn_moeda_ceu > intervalo_moeda_ceu:
+            nasce_moeda_ceu()
+            ultimo_spawn_moeda_ceu = pygame.time.get_ticks()
+
+        tela.blit(imagem_de_fundo, (0, 0))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    funcionando = False
+                elif event.key == pygame.K_1:
+                    estado_de_jogo.arma = 'espada'
+                elif event.key == pygame.K_2:
+                    estado_de_jogo.arma = 'arco'
+                elif event.key == pygame.K_SPACE:
+                    tempo_atual = pygame.time.get_ticks()
+                    if estado_de_jogo.arma == 'espada' and tempo_atual - ultimo_ataque >= cooldown_ataque:
+                        ultimo_ataque = tempo_atual
+
+                        player_center_x = player_hitbox.centerx
+                        player_center_y = player_hitbox.centery
+                        largura_ataque = estado_de_jogo.alcance_espada
+                        altura_ataque = 80 + estado_de_jogo.alcance_espada
+
+                        if player_dir == 'cima':
+                            ataque_rect = pygame.Rect(
+                                player_center_x - largura_ataque // 2,
+                                player_center_y - altura_ataque,
+                                largura_ataque,
+                                altura_ataque
+                            )
+                            pygame.draw.rect(tela, (255, 255, 0), ataque_rect, 2)
+                            estado_de_jogo.atacando = True
+                            estado_de_jogo.ataque_timer = pygame.time.get_ticks()
+                            estado_de_jogo.ataque_frame_index = 0
+
+                        elif player_dir == 'baixo':
+                            ataque_rect = pygame.Rect(
+                                player_center_x - largura_ataque // 2,
+                                player_center_y,
+                                largura_ataque,
+                                altura_ataque
+                            )
+                            pygame.draw.rect(tela, (255, 255, 0), ataque_rect, 2)
+                            estado_de_jogo.atacando = True
+                            estado_de_jogo.ataque_timer = pygame.time.get_ticks()
+                            estado_de_jogo.ataque_frame_index = 0
+
+                        elif player_dir == 'esquerda':
+                            ataque_rect = pygame.Rect(
+                                player_center_x - altura_ataque,
+                                player_center_y - largura_ataque // 2,
+                                altura_ataque,
+                                largura_ataque
+                            )
+                            pygame.draw.rect(tela, (255, 255, 0), ataque_rect, 2)
+                            estado_de_jogo.atacando = True
+                            estado_de_jogo.ataque_timer = pygame.time.get_ticks()
+                            estado_de_jogo.ataque_frame_index = 0
+
+                        elif player_dir == 'direita':
+                            ataque_rect = pygame.Rect(
+                                player_center_x,
+                                player_center_y - largura_ataque // 2,
+                                altura_ataque,
+                                largura_ataque
+                            )
+                            pygame.draw.rect(tela, (255, 255, 0), ataque_rect, 2)
+                            estado_de_jogo.atacando = True
+                            estado_de_jogo.ataque_timer = pygame.time.get_ticks()
+                            estado_de_jogo.ataque_frame_index = 0
+
+                        for orc in orcs[:]:
+                            if orc.morto:
+                                continue
+                            orc_rect = pygame.Rect(orc.x + 64, orc.y + 64, 128, 128)
+                            if ataque_rect.colliderect(orc_rect):
+                                orc.hp -= 1
+                                if orc.hp <= 0:
+                                    orc.set_animacao("morrer")
+                                    if hasattr(orc, "ao_morrer"):
+                                        itens_dropados.append(orc.ao_morrer())
+                                    estado_de_jogo.moedas_ganhas += 1
+                                else:
+                                    orc.set_animacao("hurt")
+
+                        for item in itens_dropados[:]:
+                            if item.tipo == "barril" and ataque_rect.colliderect(item.rect):
+                                if item.leva_dano():
+                                    cria_explosao(item.x + 32, item.y + 32, 150, 25)
+                                    itens_dropados.remove(item)
+                                break
+
+                    elif estado_de_jogo.arma == 'arco' and estado_de_jogo.flechas > 0:
+                        tempo_atual = pygame.time.get_ticks()
+                        if tempo_atual - ultimo_tiro >= cooldown_tiro:
+                            imagem_tiro = {
+                                'cima': flecha_cima,
+                                'baixo': flecha_baixo,
+                                'esquerda': flecha_esquerda,
+                                'direita': flecha_direita
+                            }[player_dir]
+
+                            centro_x_tiro = player_hitbox.centerx
+                            centro_y_tiro = player_hitbox.centery
+
+                            if player_dir == 'cima':
+                                tiro_x = centro_x_tiro - flecha_cima.get_width() // 2
+                                tiro_y = centro_y_tiro - flecha_cima.get_height()
+                                tiro_img = flecha_cima
+                            elif player_dir == 'baixo':
+                                tiro_x = centro_x_tiro - flecha_baixo.get_width() // 2
+                                tiro_y = centro_y_tiro
+                                tiro_img = flecha_baixo
+                            elif player_dir == 'esquerda':
+                                tiro_x = centro_x_tiro - flecha_esquerda.get_width()
+                                tiro_y = centro_y_tiro - flecha_esquerda.get_height() // 2
+                                tiro_img = flecha_esquerda
+                            elif player_dir == 'direita':
+                                tiro_x = centro_x_tiro
+                                tiro_y = centro_y_tiro - flecha_direita.get_height() // 2
+                                tiro_img = flecha_direita
+
+                            balas = {
+                                'x': tiro_x,
+                                'y': tiro_y,
+                                'velocidade': 10,
+                                'dir': player_dir,
+                                'img': tiro_img
+                            }
+                            tiros.append(balas)
+                            estado_de_jogo.flechas -= 1
+                            ultimo_tiro = tempo_atual
+
+
+                            tiros.append(balas)
+                            estado_de_jogo.flechas -= 1
+                            ultimo_tiro = tempo_atual
+
+        
