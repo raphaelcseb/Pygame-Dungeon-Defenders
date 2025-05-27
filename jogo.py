@@ -600,3 +600,20 @@ class estado_de_jogo:
     hp_castelo = 2000
     hp_max_castelo = 2000
     imune_a_explosao = False
+
+def vida_castelo(superficie):
+    largura_barra = 600
+    altura_barra = 25
+    barra_x = tela_largura // 2 - largura_barra // 2
+    barra_y = tela_altura - 35
+
+    pygame.draw.rect(superficie, (255, 255, 255), (barra_x - 2, barra_y - 2, largura_barra + 4, altura_barra + 4))
+    
+    filled = int((estado_de_jogo.hp_castelo / estado_de_jogo.hp_max_castelo) * largura_barra)
+    pygame.draw.rect(superficie, (200, 0, 0), (barra_x, barra_y, filled, altura_barra))
+
+tiros = []
+itens_dropados = []
+explosoes = []
+efeitos_especiais = []
+moedas_ceu = []
