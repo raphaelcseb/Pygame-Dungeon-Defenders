@@ -617,3 +617,23 @@ itens_dropados = []
 explosoes = []
 efeitos_especiais = []
 moedas_ceu = []
+
+def HUD(superficie):
+    hp_porcentagem = min(estado_de_jogo.HP / estado_de_jogo.max_HP, 1.0)
+    hp_largura_barra = int(300 * hp_porcentagem)
+
+    borda_barra_hp = pygame.Rect(18, 18, 304, 34)
+    pygame.draw.rect(superficie, (255, 255, 255), borda_barra_hp)
+    barra_hp = pygame.Rect(20, 20, hp_largura_barra, 30)
+    pygame.draw.rect(superficie, (255, 0, 0), barra_hp)
+
+    hud_fonte = pygame.font.Font(direcao_relativa('Font/BACKTO1982.TTF'), 24)
+    texto_dinheiro = hud_fonte.render(f"Moedas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 0))
+    texto_flechas = hud_fonte.render(f"Flechas: {estado_de_jogo.flechas}", True, (255, 255, 255))
+    texto_armas = hud_fonte.render(f"Arma: {estado_de_jogo.arma.upper()}", True, (255, 255, 255))
+    texto_wave = hud_fonte.render(f"Onda: {estado_de_jogo.onda}", True, (255, 255, 255))
+
+    superficie.blit(texto_dinheiro, (20, 60))
+    superficie.blit(texto_flechas, (20, 90))
+    superficie.blit(texto_armas, (20, 120))
+    superficie.blit(texto_wave, (20, 150))
