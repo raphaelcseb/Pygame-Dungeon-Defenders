@@ -681,3 +681,38 @@ def game_over_tela():
                     estado_de_jogo.atacando = False
 
                     game()
+
+def game():
+    ultimo_spawn_moeda_ceu = pygame.time.get_ticks()
+    intervalo_moeda_ceu = 10000 
+    estado_de_jogo.imune_a_explosao = False
+    dano_intervalo = 100
+    cooldown_ataque = 500
+    ultimo_ataque = 0
+    relogio = pygame.time.Clock()
+    funcionando = True
+    player_largura = 128
+    player_altura = 128
+    player_x = tela_largura // 2
+    player_y = tela_altura // 2
+    player_hitbox = pygame.Rect(player_x, player_y, player_largura, player_altura)
+    centro_x = player_hitbox.centerx
+    centro_y = player_hitbox.centery
+    player_dir = 'baixo'
+    player_frame_index = 0
+    player_frame_timer = 0
+    frame_delay = 0.15
+    raio_aura = 80
+    ultimo_tiro = 0
+    cooldown_tiro = 500
+
+    orcs = gerar_orcs_em_faixas(5)
+
+    estado_de_jogo.HP = estado_de_jogo.max_HP
+    estado_de_jogo.flechas = 0
+    estado_de_jogo.moedas_ganhas = 0
+    estado_de_jogo.pontuacao = 0
+    estado_de_jogo.arma = 'espada'
+    estado_de_jogo.velocidade_player = 5
+
+    pygame.mixer.music.play(loops=-1)
