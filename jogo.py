@@ -1220,3 +1220,15 @@ def game():
         tela.blit(overlay_castelo, (0, tela_altura - overlay_castelo.get_height()))
         vida_castelo(tela)
         pygame.display.flip()
+
+def cria_explosao(x, y, raio, dano):
+    explosoes.append({'x': x,'y': y,'radius': raio * 1.5,'dano': dano,'timer': pygame.time.get_ticks(),'duration': 500})
+
+def nasce_moeda_ceu():
+    faixa = random.choice(faixas_x)
+    x = faixa - 16
+    y = -50 
+    moeda = itemdropado(x, y, "moeda", caindo=True) 
+    moeda.caindo = True
+    moeda.spawn_tempo = pygame.time.get_ticks()
+    moedas_ceu.append(moeda)     
