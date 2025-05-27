@@ -879,4 +879,233 @@ def game():
                             estado_de_jogo.flechas -= 1
                             ultimo_tiro = tempo_atual
 
+        jogador_movendo = False
+        tecla = pygame.key.get_pressed()
+        if (tecla[pygame.K_LEFT] or tecla[pygame.K_a]) and player_x > 0:
+            player_x -= estado_de_jogo.velocidade_player
+            player_dir = 'esquerda'
+            jogador_movendo = True
+
+        if (tecla[pygame.K_RIGHT] or tecla[pygame.K_d]) and player_x < tela_largura - 128:
+            player_x += estado_de_jogo.velocidade_player
+            player_dir = 'direita'
+            jogador_movendo = True
+
+        if (tecla[pygame.K_UP] or tecla[pygame.K_w]) and player_y > -90:
+            player_y -= estado_de_jogo.velocidade_player
+            player_dir = 'cima'
+            jogador_movendo = True
+
+        limite_y_orc = tela_altura - 280
+        if (tecla[pygame.K_DOWN] or tecla[pygame.K_s]) and player_y < limite_y_orc:
+            player_y += estado_de_jogo.velocidade_player
+            player_dir = 'baixo'
+            jogador_movendo = True
+
+
+        hitbox_largura = 64
+        hitbox_altura = 80
+        player_hitbox = pygame.Rect(
+            player_x + (128 - hitbox_largura) // 2,
+            player_y + (128 - hitbox_altura),
+            hitbox_largura,
+            hitbox_altura)
+        centro_x = player_hitbox.centerx
+        centro_y = player_hitbox.centery
+
+        for item in itens_dropados[:]:
+            if item.tipo == "moeda":
+                if not item.update():
+                    itens_dropados.remove(item)
+                    continue
+                if player_hitbox.colliderect(item.rect):
+                    itens_dropados.remove(item)
+                    estado_de_jogo.moedas_ganhas += 1
+                    continue
+            item.draw(tela, show_hitbox=True)
+
+        for moeda_do_ceu in moedas_ceu[:]:
+            if not moeda_do_ceu.update():
+                moedas_ceu.remove(moeda_do_ceu)
+                continue
+            if player_hitbox.colliderect(moeda_do_ceu.rect):
+                moedas_ceu.remove(moeda_do_ceu)
+                estado_de_jogo.moedas_ganhas += 1
+                continue
+            moeda_do_ceu.draw(tela, show_hitbox=True)
+
+        for orc in sorted(orcs, key=lambda o: o.y):
+            if orc.morto:
+
+                orc.update(dt, (player_x, player_y))
+                continue
+
+            if isinstance(orc, VampiroBoss) and orc.bloqueio_especial:
+                orc.update(dt, (player_x, player_y))
+                continue
+
+            orc_rect = pygame.Rect(orc.x + 64, orc.y + 64, 128, 128)
+            if player_hitbox.colliderect(orc_rect):
+                agora = pygame.time.get_ticks()
+                if agora - estado_de_jogo.dano_timer >= dano_intervalo and not estado_de_jogo.player_machucado and not estado_de_jogo.player_morto:
+                    estado_de_jogo.HP -= orc.dano
+                    estado_de_jogo.dano_timer = agora
+                    estado_de_jogo.player_machucado = True
+                    estado_de_jogo.player_machucado_timer = agora
+                    estado_de_jogo.player_machucado_frame_index = 0
+                    estado_de_jogo.player_machucado_frame_timer = 0
+                    if estado_de_jogo.HP <= 0:
+                        estado_de_jogo.player_morto = True
+
+                orc.parado = True
+                orc.set_animacao("atacar")
+            else:
+                orc.parado = False
+                orc.set_animacao("andar")
+
+            orc.update(dt, (player_x, player_y))
+
+        orcs = [orc for orc in orcs if not orc.animacao_de_morte]
+
+        if estado_de_jogo.player_morto:
+            tempo_passado = pygame.time.get_ticks() - estado_de_jogo.player_morto_timer
+            progesso = tempo_passado / estado_de_jogo.player_morto_duracao
+            estado_de_jogo.player_morto_frame_index = min(
+                int(progesso * len(player_frames_morte[player_dir])),
+                len(player_frames_morte[player_dir]) - 1)
+            frame = player_frames_morte[player_dir][estado_de_jogo.player_morto_frame_index]
+
+        elif estado_de_jogo.player_machucado:
+            tempo_atual = pygame.time.get_ticks()
+            if tempo_atual - estado_de_jogo.player_machucado_timer >= estado_de_jogo.player_machucado_duracao:
+                estado_de_jogo.player_machucado = False
+                estado_de_jogo.player_machucado_frame_index = 0
+                estado_de_jogo.player_machucado_frame_timer = 0
+                frame = player_sprites[player_dir][player_frame_index]
+            else:
+                estado_de_jogo.player_machucado_frame_timer += dt
+                if estado_de_jogo.player_machucado_frame_timer >= estado_de_jogo.player_machucado_frame_delay:
+                    estado_de_jogo.player_machucado_frame_index = (
+                        estado_de_jogo.player_machucado_frame_index + 1
+                    ) % len(player_machucado_frames[player_dir])
+                    estado_de_jogo.player_machucado_frame_timer = 0
+                frame = player_machucado_frames[player_dir][estado_de_jogo.player_machucado_frame_index]
+
+        elif estado_de_jogo.atacando:
+            tempo_atual = pygame.time.get_ticks()
+            progesso = (tempo_atual - estado_de_jogo.ataque_timer) / estado_de_jogo.duracao_do_ataque
+            lista_frames = player_ataque_frames[player_dir]
+            estado_de_jogo.ataque_frame_index = min(int(progesso * len(lista_frames)), len(lista_frames) - 1)
+            frame = lista_frames[estado_de_jogo.ataque_frame_index]
+
+            if tempo_atual - estado_de_jogo.ataque_timer >= estado_de_jogo.duracao_do_ataque:
+                estado_de_jogo.atacando = False
+
+        else:
+            frame = player_sprites[player_dir][player_frame_index]
+
+        desenhaveis = []
+
+        for orc in orcs:
+            desenhaveis.append({'y': orc.y, 'type': 'orc', 'obj': orc})
+
+        desenhaveis.append({'y': player_y, 'type': 'player', 'obj': frame})
+
+        for balas in tiros:
+            tela.blit(balas['img'], (balas['x'], balas['y']))
+
+        for entidade in sorted(desenhaveis, key=lambda e: e['y']):
+            if entidade['type'] == 'orc':
+                entidade['obj'].draw(tela, show_hitbox=True)
+            elif entidade['type'] == 'player':
+                tela.blit(entidade['obj'], (player_x - 60, player_y - 40))
+
+        for explosion in explosoes[:]:
+            tempo_atual = pygame.time.get_ticks()
+            progesso = (tempo_atual - explosion['timer']) / explosion['duration']
+            if progesso >= 1:
+                explosoes.remove(explosion)
+                continue
+
+            explosao_rect = pygame.Rect(
+                explosion['x'] - explosion['radius'],
+                explosion['y'] - explosion['radius'],
+                explosion['radius'] * 2,
+                explosion['radius'] * 2)
+
+            for orc in orcs[:]:
+                if orc.morto:
+                    continue
+                orc_center = pygame.Rect(orc.x + 96, orc.y + 96, 1, 1)
+                if orc_center.colliderect(explosao_rect):
+                    orc.hp -= explosion['dano']
+                    if orc.hp <= 0:
+                        orc.set_animacao("morrer")
+                        if hasattr(orc, "ao_morrer"):
+                            itens_dropados.append(orc.ao_morrer())
+                        estado_de_jogo.moedas_ganhas += 1
+                    else:
+                        orc.set_animacao("hurt")
+
+            player_center = pygame.Rect(player_x + 96, player_y + 96, 1, 1)
+            if player_center.colliderect(explosao_rect) and not estado_de_jogo.imune_a_explosao:
+                agora = pygame.time.get_ticks()
+                if agora - estado_de_jogo.dano_timer >= dano_intervalo:
+                    estado_de_jogo.HP -= explosion['dano']
+                    estado_de_jogo.dano_timer = agora
+
+            explosao_tempo_passado = pygame.time.get_ticks() - explosion['timer']
+            alpha = max(0, min(255, 255 - int(255 * (explosao_tempo_passado / 1000))))
+            superficie_explosao = pygame.Surface((explosion['radius'] * 2, explosion['radius'] * 2), pygame.SRCALPHA)
+            pygame.draw.circle(
+                superficie_explosao,
+                (255, 165, 0, alpha),
+                (explosion['radius'], explosion['radius']),
+                int(explosion['radius'] * progesso)
+            )
+            tela.blit(superficie_explosao, (explosion['x'] - explosion['radius'], explosion['y'] - explosion['radius']))
+
+        orcs = [orc for orc in orcs if not orc.animacao_de_morte]
+
+        if not orcs:
+            estado_de_jogo.onda_timer += dt * 1000  # Ajustar para milissegundos
+            if estado_de_jogo.onda_timer >= estado_de_jogo.cooldown_onda:
+                estado_de_jogo.onda += 1
+                estado_de_jogo.onda_timer = 0
+                estado_de_jogo.mostra_mensagem_onda = True
+                estado_de_jogo.timer_mensagem_onda = pygame.time.get_ticks()
+
+                mostra_loja()
+                itens_dropados.clear()
+                moedas_ceu.clear()
+                efeitos_especiais.clear()
+                tiros.clear()
+
+                qtd_orcs = 5 + estado_de_jogo.onda
+                if estado_de_jogo.onda in [3, 6, 10]:
+                    if estado_de_jogo.onda == 3:
+                        orcs = [Vampiro1Boss(tela_largura // 2 - 128, -300)]
+                    elif estado_de_jogo.onda == 6:
+                        orcs = [Vampiro2Boss(tela_largura // 2, -300)]
+                    elif estado_de_jogo.onda == 10:
+                        orcs = [Vampiro3Boss(tela_largura // 2, -400)]
+                else:
+                    novos_orcs = gerar_orcs_em_faixas(qtd_orcs)
+                    if not novos_orcs:
+                        novos_orcs = [Orc1Enemy(random.choice(faixas_x) - 128, -100),
+                                      Orc2Enemy(random.choice(faixas_x) - 128, -100),
+                                      Orc3Enemy(random.choice(faixas_x) - 128, -100)]
+                    for orc in novos_orcs:
+                        orc.velocidade += estado_de_jogo.onda * 0.05
+                        orc.velocidade = min(orc.velocidade, 5.0)
+                        if estado_de_jogo.onda >= 3:
+                            if orc.tipo == "orc1":
+                                orc.hp = min(3, orc.hp + estado_de_jogo.onda // 3)
+                            elif orc.tipo == "orc2":
+                                orc.hp = min(2, orc.hp + estado_de_jogo.onda // 4)
+                            elif orc.tipo == "orc3":
+                                orc.hp = min(4, orc.hp + estado_de_jogo.onda // 2)
+                    orcs = novos_orcs
+
+        atualiza_tiros(dt, orcs)
         
