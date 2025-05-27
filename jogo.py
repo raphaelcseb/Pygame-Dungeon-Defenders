@@ -55,7 +55,7 @@ orc1_morte_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc1_de
 orc2_machucado_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc2_hurt_full.png'))
 orc2_ataque_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc2_attack_full.png'))
 orc2_corpo_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc2_walk_full.png'))
-orc2_morte_spites = pygame.image.load(direcao_relativa('Animation/Enemy/orc2_death_full.png'))
+orc2_morte_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc2_death_full.png'))
 
 orc3_machucado_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc3_hurt_full.png'))
 orc3_ataque_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc3_attack_full.png'))
@@ -82,8 +82,6 @@ imagem_moeda = pygame.transform.scale(imagem_moeda, (32, 32))
 imagem_barril = pygame.image.load(direcao_relativa('Obstacles/barrel.png'))
 imagem_barril = pygame.transform.scale(imagem_barril, (64, 64))
 
-#Carregando os sons do jogo
-
 def tocar_overworld():
     pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Música de fundo em loop 
     pygame.mixer.music.play(loops=-1)
@@ -101,10 +99,8 @@ espada_som = pygame.mixer.Sound('Sons\sword_cut.mp3')
 som_compra = pygame.mixer.Sound('Sons\purchase_sound.mp3')
 hit_orc_som = pygame.mixer.Sound('Sons\orc_hit.mp3')
 
-
-
 def carrega_orc_frames(sheet, largura_frame=64, altura_frame=64, escala=4, linhas=4, colunas=6):
-    direcoes = ['down', 'up', 'left', 'right']
+    direcoes = ['baixo', 'cima', 'esquerda', 'direita']
     frames = {dir: [] for dir in direcoes}
     for y, dir in enumerate(direcoes):
         for x in range(colunas):
@@ -120,7 +116,7 @@ def carrega_orc_frames(sheet, largura_frame=64, altura_frame=64, escala=4, linha
 
 
 def carrega_player_sprites(sheet, frame_width, frame_height, scale=2):
-    direcoes = ['down', 'left', 'right', 'up']
+    direcoes = ['baixo', 'esquerda', 'direita', 'cima']
     sprites = {dir: [] for dir in direcoes}
     for y, dir in enumerate(direcoes):
         for x in range(3):
@@ -133,7 +129,7 @@ player_sprites = carrega_player_sprites(player_folha_sprites, 64, 64, scale=4)
 
 
 def carrega_ataque_frames(sheet, frame_width=64, frame_height=64, rows=4, cols=8, scale=4):
-    direcoes = ['down', 'left', 'right', 'up']
+    direcoes = ['baixo', 'esquerda', 'direita', 'cima']
     frames = {dir: [] for dir in direcoes}
     for y, dir in enumerate(direcoes):
         for x in range(cols):
@@ -154,7 +150,7 @@ orc1_morte_frames = carrega_orc_frames(orc1_morte_sprites)
 orc2_ataque_frames = carrega_orc_frames(orc2_ataque_sprites)
 orc2_corpo_frames = carrega_orc_frames(orc2_corpo_sprites)
 orc2_machucado_frames = carrega_orc_frames(orc2_machucado_sprites)
-orc2_morte_frames = carrega_orc_frames(orc2_morte_spites)
+orc2_morte_frames = carrega_orc_frames(orc2_morte_sprites)
 
 orc3_ataque_frames = carrega_orc_frames(orc3_ataque_sprites)
 orc3_corpo_frames = carrega_orc_frames(orc3_corpo_sprites)
@@ -177,344 +173,341 @@ vampiro3_machucado_frames = carrega_orc_frames(vampiro3_machucado_sprites, colun
 vampiro3_morte_frames = carrega_orc_frames(vampiro3_morte_sprites, colunas=11)
 
 class itemdropado:
-    def __init__(self, x, y, tipo_item,caindo=False):
-        self.x = x
-        self.y = y
-        self.tipo = tipo_item
-        self.spawn_tempo = pygame.time.get_ticks()
-        self.piscar_timer = 0
-        self.visivel = True
-        self.vida = 2 if tipo_item == "barril" else 1
-        self.invulneravel_ate = pygame.time.get_ticks() + 2000
-        self.rect = pygame.Rect(x, y, 32, 32) if tipo_item == "moeda" else pygame.Rect(x, y, 64, 64)
-        self.caindo = False
-        self.velocidade_cair = 3
-        self.parar_y = tela_altura - 200
-        self.caindo = caindo
+    def __init__(atributo, x, y, tipo_item,caindo=False):
+        atributo.x = x
+        atributo.y = y
+        atributo.tipo = tipo_item
+        atributo.spawn_tempo = pygame.time.get_ticks()
+        atributo.piscar_timer = 0
+        atributo.visivel = True
+        atributo.vida = 2 if tipo_item == "barril" else 1
+        atributo.invulneravel_ate = pygame.time.get_ticks() + 2000
+        atributo.rect = pygame.Rect(x, y, 32, 32) if tipo_item == "moeda" else pygame.Rect(x, y, 64, 64)
+        atributo.caindo = False
+        atributo.velocidade_cair = 3
+        atributo.parar_y = tela_altura - 200
+        atributo.caindo = caindo
 
-    def update(self):
+    def update(atributo):
         tempo_atual = pygame.time.get_ticks()
-        tempo_de_vida = tempo_atual - self.spawn_tempo
+        tempo_de_vida = tempo_atual - atributo.spawn_tempo
 
-        if self.tipo == "moeda" and self.caindo:
-            self.y += self.velocidade_cair
-            if self.y >= self.parar_y:
-                self.y = self.parar_y
-                self.caindo = False
+        if atributo.tipo == "moeda" and atributo.caindo:
+            atributo.y += atributo.velocidade_cair
+            if atributo.y >= atributo.parar_y:
+                atributo.y = atributo.parar_y
+                atributo.caindo = False
 
-        self.rect.topleft = (self.x, self.y)
+        atributo.rect.topleft = (atributo.x, atributo.y)
 
-        if self.tipo == "moeda":
+        if atributo.tipo == "moeda":
             if tempo_de_vida > 9000:
-                self.piscar_timer += pygame.time.get_ticks() - (self.spawn_tempo + 3000)
-                if self.piscar_timer > 200:
-                    self.visivel = not self.visivel
-                    self.piscar_timer = 0
+                atributo.piscar_timer += pygame.time.get_ticks() - (atributo.spawn_tempo + 3000)
+                if atributo.piscar_timer > 200:
+                    atributo.visivel = not atributo.visivel
+                    atributo.piscar_timer = 0
             return tempo_de_vida < 11000
 
-        elif self.tipo == "barril":
+        elif atributo.tipo == "barril":
             return True
 
     
-    def leva_dano(self):
-        if pygame.time.get_ticks() < self.invulneravel_ate:
+    def leva_dano(atributo):
+        if pygame.time.get_ticks() < atributo.invulneravel_ate:
             return False
-        self.vida -= 1
-        self.invulneravel_ate = pygame.time.get_ticks() + 300  
-        return self.vida <= 0
+        atributo.vida -= 1
+        atributo.invulneravel_ate = pygame.time.get_ticks() + 300  
+        return atributo.vida <= 0
 
 
-    def desenha(self, surface, show_hitbox=False):
-        if not self.visivel and self.tipo == "moeda":
+    def draw(proprio, superficie, show_hitbox=False):
+        if not proprio.visivel and proprio.tipo == "moeda":
             return
 
-        if self.tipo == "moeda":
-            surface.blit(imagem_moeda, self.rect.topleft)
-        elif self.tipo == "barril":
-            surface.blit(imagem_barril, self.rect.topleft)
+        if proprio.tipo == "moeda":
+            superficie.blit(imagem_moeda, proprio.rect.topleft)
+        elif proprio.tipo == "barril":
+            superficie.blit(imagem_barril, proprio.rect.topleft)
 
         if show_hitbox:
-            pygame.draw.rect(surface, (0, 255, 0), self.rect, 2)
+            pygame.draw.rect(superficie, (0, 255, 0), proprio.rect, 2)
 
 class OrcBase:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.frame_index = 0
-        self.frame_atual = self.walk_frames
-        self.frame_delay = 0.3
-        self.frame_timer = 0
-        self.parado = False
-        self.atacando = False
-        self.machucado = False
-        self.machucado_timer = 0
-        self.machucado_duracao = 500
-        self.morto = False
-        self.morto_timer = 0
-        self.morto_duracao = 1000
-        self.animacao_de_morte = False
-        self.direcao = 'down'
-        self.ultimo_ataque_castelo = 0
-        self.intervalo_ataque_castelo = 1000
+    def __init__(atributo, x, y):
+        atributo.x = x
+        atributo.y = y
+        atributo.frame_index = 0
+        atributo.frame_atual = atributo.andando_frames
+        atributo.frame_delay = 0.3
+        atributo.frame_timer = 0
+        atributo.parado = False
+        atributo.atacando = False
+        atributo.machucado = False
+        atributo.machucado_timer = 0
+        atributo.machucado_duracao = 500
+        atributo.morto = False
+        atributo.morto_timer = 0
+        atributo.morto_duracao = 1000
+        atributo.animacao_de_morte = False
+        atributo.direcao = 'baixo'
+        atributo.ultimo_ataque_castelo = 0
+        atributo.intervalo_ataque_castelo = 1000
 
 
 
-    def update(self, dt, player_pos):
-        if self.morto:
-            self.frame_timer += dt
-            if self.frame_timer >= self.frame_delay:
-                direcao_frames = self.frame_atual.get(self.direcao, list(self.frame_atual.values())[0])
-                if self.frame_index < len(direcao_frames) - 1:
-                    self.frame_index += 1
-                    self.frame_timer = 0
+    def update(atributo, dt, player_pos):
+        if atributo.morto:
+            atributo.frame_timer += dt
+            if atributo.frame_timer >= atributo.frame_delay:
+                direcao_frames = atributo.frame_atual.get(atributo.direcao, list(atributo.frame_atual.values())[0])
+                if direcao_frames and atributo.frame_index < len(direcao_frames) - 1:
+                    atributo.frame_index += 1
+                    atributo.frame_timer = 0
                 else:
-                    self.animacao_de_morte = True
+                    atributo.animacao_de_morte = True
             return
 
-        if getattr(self, "post_special_block", False):
+        if getattr(atributo, "post_special_block", False):
             return
 
+        if atributo.machucado:
+            if pygame.time.get_ticks() - atributo.machucado_timer > atributo.machucado_duracao:
+                atributo.machucado = False
+                atributo.set_animacao("andar")
 
-        if self.morto:
-            self.frame_timer += dt
-            if self.frame_timer >= self.frame_delay:
-                direcao_frames = self.frame_atual.get(self.direcao, list(self.frame_atual.values())[0])
-                if self.frame_index < len(direcao_frames) - 1:
-                    self.frame_index += 1
-                    self.frame_timer = 0
-                else:
-                    self.animacao_de_morte = True
-            return
-
-        if self.machucado:
-            if pygame.time.get_ticks() - self.machucado_timer > self.machucado_duracao:
-                self.machucado = False
-                self.set_animacao("andar")
-
-        if not self.parado:
+        if not atributo.parado:
             player_x, player_y = player_pos
-            dist_x = player_x - self.x
-            dist_y = player_y - self.y
+            dist_x = player_x - atributo.x
+            dist_y = player_y - atributo.y
             distancia = (dist_x**2 + dist_y**2) ** 0.5
 
-            if distancia < getattr(self, 'follow_range', 1000):
+            if distancia < atributo.seguir:
                 norm_x = dist_x / distancia
                 norm_y = dist_y / distancia
-                self.x += norm_x * self.speed
-                self.y += norm_y * self.speed
+                atributo.x += norm_x * atributo.velocidade
+                atributo.y += norm_y * atributo.velocidade
 
                 if abs(dist_y) > abs(dist_x):
-                    self.direcao = 'down' if dist_y > 0 else 'up'
+                    atributo.direcao = 'baixo' if dist_y > 0 else 'cima'
                 else:
-                    self.direcao = 'right' if dist_x > 0 else 'left'
+                    atributo.direcao = 'direita' if dist_x > 0 else 'esquerda'
             else:
-                self.y += self.speed
-                self.direcao = 'down'
+                atributo.y += atributo.velocidade
+                atributo.direcao = 'baixo'
 
-            if self.y > tela_altura - 325:
-                self.y = tela_altura - 325
+            if atributo.y > tela_altura - 325:
+                atributo.y = tela_altura - 325
                 agora = pygame.time.get_ticks()
-                if not self.parado:
-                    self.set_animacao("atacar")
-                    self.parado = True
+                if not atributo.parado:
+                    atributo.set_animacao("atacar")
+                    atributo.parado = True
 
-                if agora - self.ultimo_ataque_castelo >= self.intervalo_ataque_castelo:
-                    estado_de_jogo.hp_castelo -= self.damage
-                    self.ultimo_ataque_castelo = agora
+                if agora - atributo.ultimo_ataque_castelo >= atributo.intervalo_ataque_castelo:
+                    estado_de_jogo.hp_castelo -= atributo.dano
+                    atributo.ultimo_ataque_castelo = agora
 
                     if estado_de_jogo.hp_castelo <= 0:
                         estado_de_jogo.player_morto = True
                         estado_de_jogo.player_morto_timer = pygame.time.get_ticks()
 
-        self.frame_timer += dt
-        if self.frame_timer >= self.frame_delay:
-            self.frame_index = (self.frame_index + 1) % len(self.frame_atual[self.direcao])
-            self.frame_timer = 0
+        atributo.frame_timer += dt
+        if atributo.frame_timer >= atributo.frame_delay:
+            direcao_frames = atributo.frame_atual.get(atributo.direcao, list(atributo.frame_atual.values())[0])
+            if direcao_frames:
+                atributo.frame_index = (atributo.frame_index + 1) % len(direcao_frames)
+                atributo.frame_timer = 0
 
+    def draw(atributo, superficie, show_hitbox=False):
+        frame_list = atributo.frame_atual.get(atributo.direcao) or list(atributo.frame_atual.values())[0]
+        if not frame_list:
+            debug_frame = pygame.Surface((128, 128))
+            debug_frame.fill((255, 0, 0))
+            superficie.blit(debug_frame, (atributo.x, atributo.y))
+            if show_hitbox:
+                rect = pygame.Rect(atributo.x + 64, atributo.y + 64, 128, 128)
+                pygame.draw.rect(superficie, (0, 255, 0), rect, 2)
+            return
+        frame_index = min(int(atributo.frame_index), len(frame_list) - 1)
+        frame = frame_list[frame_index]
 
-
-    def desenha(self, surface, show_hitbox=False):
-        frame_list = self.frame_atual.get(self.direcao) or list(self.frame_atual.values())[0]
-        frame = frame_list[int(self.frame_index)]
-
-        if self.machucado and not self.morto:
-            temp_surface = pygame.Surface((frame.get_width(), frame.get_height()), pygame.SRCALPHA)
-            temp_surface.blit(frame, (0, 0))
-            temp_surface.fill((255, 0, 0, 100), special_flags=pygame.BLEND_MULT)
-            surface.blit(temp_surface, (self.x, self.y))
+        if atributo.machucado and not atributo.morto:
+            temp_superficie = pygame.Surface((frame.get_width(), frame.get_height()), pygame.SRCALPHA)
+            temp_superficie.blit(frame, (0, 0))
+            temp_superficie.fill((255, 0, 0, 100), special_flags=pygame.BLEND_MULT)
+            superficie.blit(temp_superficie, (atributo.x, atributo.y))
         else:
-            surface.blit(frame, (self.x, self.y))
+            superficie.blit(frame, (atributo.x, atributo.y))
 
         if show_hitbox:
-            rect = pygame.Rect(self.x + 64, self.y + 64, 128, 128)
-            pygame.draw.rect(surface, (0, 255, 0), rect, 2)
+            rect = pygame.Rect(atributo.x + 64, atributo.y + 64, 128, 128)
+            pygame.draw.rect(superficie, (0, 255, 0), rect, 2)
 
-
-    def set_animacao(self, tipo):
-        if self.morto:
+    def set_animacao(atributo, tipo):
+        if atributo.morto:
             return
 
         if tipo == "andar":
-            self.frame_atual = self.walk_frames
+            atributo.frame_atual = atributo.andando_frames
         elif tipo == "atacar":
-            self.frame_atual = self.attack_frames
+            atributo.frame_atual = atributo.frames_ataque
         elif tipo == "hurt":
-            self.frame_atual = self.hurt_frames
-            self.machucado = True
-            self.machucado_timer = pygame.time.get_ticks()
+            atributo.frame_atual = atributo.frames_machucado
+            atributo.machucado = True
+            atributo.machucado_timer = pygame.time.get_ticks()
         elif tipo == "morrer":
-            self.frame_atual = self.death_frames
-            self.morto = True
-            self.frame_index = 0
-            self.morto_timer = pygame.time.get_ticks()
+            atributo.frame_atual = atributo.frames_de_morte
+            atributo.morto = True
+            atributo.frame_index = 0
+            atributo.morto_timer = pygame.time.get_ticks()
+
 
 class Orc1Enemy(OrcBase):
-    def __init__(self, x, y):
-        self.velocidade = 2
-        self.machucado_frames = orc1_machucado_frames
-        self.andando_frames = orc1_corpo_frames
-        self.ataque_frames = orc1_ataque_frames
-        self.morte_frames = orc1_morte_frames
-        self.hp = 2
-        self.dano = 10
-        self.tipo = "orc1"
-        self.seguir = 300
+    def __init__(atributo, x, y):
+        atributo.velocidade = 2
+        atributo.frames_machucado = orc1_machucado_frames
+        atributo.andando_frames = orc1_corpo_frames
+        atributo.frames_ataque = orc1_ataque_frames
+        atributo.frames_de_morte = orc1_morte_frames
+        atributo.hp = 2
+        atributo.dano = 10
+        atributo.tipo = "orc1"
+        atributo.seguir = 300
         super().__init__(x, y)
 
 class Orc2Enemy(OrcBase):
-    def __init__(self, x, y):
-        self.velocidade = 4
-        self.machucado_frames = orc2_machucado_frames
-        self.andando_frames = orc2_corpo_frames
-        self.ataque_frames = orc2_ataque_frames
-        self.morte_frames = orc2_morte_frames
-        self.hp = 1
-        self.dano = 8
-        self.tipo = "orc2"
-        self.seguir = 300
+    def __init__(atributo, x, y):
+        atributo.velocidade = 3
+        atributo.frames_machucado = orc2_machucado_frames
+        atributo.andando_frames = orc2_corpo_frames
+        atributo.frames_ataque = orc2_ataque_frames
+        atributo.frames_de_morte = orc2_morte_frames
+        atributo.hp = 1
+        atributo.dano = 8
+        atributo.tipo = "orc2"
+        atributo.seguir = 300
         super().__init__(x, y)
 
-    def na_morte(self):
-        return itemdropado(self.x + 112, self.y + 112, "moeda")
+    def ao_morrer(atributo):
+        return itemdropado(atributo.x + 112, atributo.y + 112, "moeda")
 
 class Orc3Enemy(OrcBase):
-    def __init__(self, x, y):
-        self.velocidade = 3
-        self.machucado_frames = orc3_machucado_frames
-        self.andando_frames = orc3_corpo_frames
-        self.ataque_frames = orc3_ataque_frames
-        self.morte_frames = orc3_morte_frames
-        self.hp = 3
-        self.dano = 12
-        self.tipo = "orc3"
-        self.seguir = 300
+    def __init__(atributo, x, y):
+        atributo.velocidade = 1
+        atributo.frames_machucado = orc3_machucado_frames
+        atributo.andando_frames = orc3_corpo_frames
+        atributo.frames_ataque = orc3_ataque_frames
+        atributo.frames_de_morte = orc3_morte_frames
+        atributo.hp = 3
+        atributo.dano = 12
+        atributo.tipo = "orc3"
+        atributo.seguir = 300
         super().__init__(x, y)
 
-    def na_morte(self):
-        return itemdropado(self.x + 96, self.y + 96, "barril")
+    def ao_morrer(atributo):
+        return itemdropado(atributo.x + 96, atributo.y + 96, "barril")
 
 class VampiroBoss(OrcBase):
-    def __init__(self, x, y, andando_frames, ataque_frames, machucado_frames, morte_frames, level=1):
-        self.andando_frames = andando_frames
-        self.frames_ataque = ataque_frames
-        self.frames_machucado = machucado_frames
-        self.frames_de_morte = morte_frames
-        self.hp = 30 + level * 10
-        self.max_hp = self.hp
-        self.dano = 20 + level * 5
-        self.tipo = f"vampiro{level}"
-        self.velocidade = 1 + level * 0.2
+    def __init__(atributo, x, y, andando_frames, ataque_frames, machucado_frames, morte_frames, level=1):
+        atributo.andando_frames = andando_frames
+        atributo.frames_ataque = ataque_frames
+        atributo.frames_machucado = machucado_frames
+        atributo.frames_de_morte = morte_frames
+        atributo.hp = 30 + level * 10
+        atributo.max_hp = atributo.hp
+        atributo.dano = 20 + level * 5
+        atributo.tipo = f"vampiro{level}"
+        atributo.velocidade = 1 + level * 0.2
         super().__init__(x, y)
-        self.level = level
-        self.linhas_ataque_especial = []        
-        self.fase_ataque_especial = 0
-        self.tempo_do_ultimo_ataque = pygame.time.get_ticks()
-        self.intervalo_ataque_especial = 500
-        self.ataque_especial_cooldown = 8000 
-        self.na_sequencia_de_ataque = False
-        self.delay_depois_ataque = 2500
-        self.timer_depois_ataque = 0
-        self.timer_ataque_especial = pygame.time.get_ticks()
-        self.bloqueio_especial = False
-        self.bloqueio_depois_do_especial = 0
-        self.duracao_depois_do_especial = 2500
-        self.distancia_seguir = 150000
+        atributo.level = level
+        atributo.linhas_ataque_especial = []        
+        atributo.fase_ataque_especial = 0
+        atributo.tempo_do_ultimo_ataque = pygame.time.get_ticks()
+        atributo.intervalo_ataque_especial = 500
+        atributo.ataque_especial_cooldown = 8000 
+        atributo.na_sequencia_de_ataque = False
+        atributo.delay_depois_ataque = 2500
+        atributo.timer_depois_ataque = 0
+        atributo.timer_ataque_especial = pygame.time.get_ticks()
+        atributo.bloqueio_especial = False
+        atributo.bloqueio_depois_do_especial = 0
+        atributo.duracao_depois_do_especial = 2500
+        atributo.seguir = 150000
         
-    def na_morte(self):
-        return itemdropado(self.x + 112, self.y + 112, "moeda")
+    def ao_morrer(atributo):
+        return itemdropado(atributo.x + 112, atributo.y + 112, "moeda")
 
 
 
-    def ataque_em_circulo(self, offset_angle=0):
-        for angle in range(offset_angle, 360 + offset_angle, 30):
-            direcao = pygame.math.Vector2(1, 0).rotate(angle)
+    def ataque_em_circulo(atributo, angulos=0):
+        for angulo in range(angulos, 360 + angulos, 30):
+            direcao = pygame.math.Vector2(1, 0).rotate(angulo)
             projetil = {
-                'x': self.x + 128,
-                'y': self.y + 128,
+                'x': atributo.x + 128,
+                'y': atributo.y + 128,
                 'dx': direcao.x * 8,
                 'dy': direcao.y * 8,
                 'timer': pygame.time.get_ticks(),
-                'damage': 10 + self.level * 5,
+                'dano': 10 + atributo.level * 5,
                 'ignora_imunidade': True 
             }
             efeitos_especiais.append(projetil)
 
-    def ataque_especial(self):
+    def ataque_especial(atributos):
         now = pygame.time.get_ticks()
 
-        if self.bloqueio_especial and now - self.bloqueio_depois_do_especial >= self.duracao_depois_do_especial:
-            self.bloqueio_especial = False
+        if atributos.bloqueio_especial and now - atributos.bloqueio_depois_do_especial >= atributos.duracao_depois_do_especial:
+            atributos.bloqueio_especial = False
 
-        if self.na_sequencia_de_ataque:
-            if self.fase_ataque_especial < 3 and now - self.tempo_do_ultimo_ataque >= self.intervalo_ataque_especial:
-                offset = 0 if self.fase_ataque_especial % 2 == 0 else 15
-                self.ataque_em_circulo(offset_angle=offset)
-                self.tempo_do_ultimo_ataque = now
-                self.fase_ataque_especial += 1
+        if atributos.na_sequencia_de_ataque:
+            if atributos.fase_ataque_especial < 3 and now - atributos.tempo_do_ultimo_ataque >= atributos.intervalo_ataque_especial:
+                offset = 0 if atributos.fase_ataque_especial % 2 == 0 else 15
+                atributos.ataque_em_circulo(angulos=offset)
+                atributos.tempo_do_ultimo_ataque = now
+                atributos.fase_ataque_especial += 1
 
-                if self.fase_ataque_especial == 3:
-                    self.timer_depois_ataque = now
-                    self.parado = True
+                if atributos.fase_ataque_especial == 3:
+                    atributos.timer_depois_ataque = now
+                    atributos.parado = True
 
-                    self.bloqueio_especial = True
-                    self.bloqueio_depois_do_especial = now
-
-
-            elif self.fase_ataque_especial == 3 and now - self.timer_depois_ataque >= self.delay_depois_ataque:
-                self.na_sequencia_de_ataque = False
-                self.timer_ataque_especial = now
-                self.parado = False
-
-                self.bloqueio_especial = True
-                self.bloqueio_depois_do_especial = now
-
-        elif now - self.timer_ataque_especial >= self.ataque_especial_cooldown:
-            self.fase_ataque_especial = 0
-            self.na_sequencia_de_ataque = True
-            self.tempo_do_ultimo_ataque = now
+                    atributos.bloqueio_especial = True
+                    atributos.bloqueio_depois_do_especial = now
 
 
-    def barra_vida(self, surface):
+            elif atributos.fase_ataque_especial == 3 and now - atributos.timer_depois_ataque >= atributos.delay_depois_ataque:
+                atributos.na_sequencia_de_ataque = False
+                atributos.timer_ataque_especial = now
+                atributos.parado = False
+
+                atributos.bloqueio_especial = True
+                atributos.bloqueio_depois_do_especial = now
+
+        elif now - atributos.timer_ataque_especial >= atributos.ataque_especial_cooldown:
+            atributos.fase_ataque_especial = 0
+            atributos.na_sequencia_de_ataque = True
+            atributos.tempo_do_ultimo_ataque = now
+
+
+    def barra_vida(atributo, superficie):
         largura_barra = 600
         bar_height = 25
         bar_x = tela_largura // 2 - largura_barra// 2
         bar_y = 20
-        pygame.draw.rect(surface, (255, 255, 255), (bar_x - 2, bar_y - 2, largura_barra + 4, bar_height + 4))
-        filled = int((self.hp / self.max_hp) * largura_barra)
-        pygame.draw.rect(surface, (221, 160, 221), (bar_x, bar_y, filled, bar_height))
+        pygame.draw.rect(superficie, (255, 255, 255), (bar_x - 2, bar_y - 2, largura_barra + 4, bar_height + 4))
+        filled = int((atributo.hp / atributo.max_hp) * largura_barra)
+        pygame.draw.rect(superficie, (221, 160, 221), (bar_x, bar_y, filled, bar_height))
     
-    def desenha_ataque_especial(self, surface):
-        for line in self.linhas_ataque_especial:
+    def desenha_ataque_especial(atributo, superficie):
+        for linha in atributo.linhas_ataque_especial:
             pygame.draw.line(
-                surface, 
+                superficie, 
                 (255, 0, 0),
-                (line['start_x'], line['start_y']),
-                (line['end_x'], line['end_y']),
+                (linha['start_x'], linha['start_y']),
+                (linha['end_x'], linha['end_y']),
                 3
             )
 
 class Vampiro1Boss(VampiroBoss):
-    def __init__(self, x, y):
+    def __init__(atributo, x, y):
         super().__init__(x, y,
                          vampiro1_andando_frames,
                          vampiro1_ataque_frames,
@@ -523,7 +516,7 @@ class Vampiro1Boss(VampiroBoss):
                          level=1)
 
 class Vampiro2Boss(VampiroBoss):
-    def __init__(self, x, y):
+    def __init__(atributo, x, y):
         super().__init__(x, y,
                          vampiro2_andando_frames,
                          vampiro2_ataque_frames,
@@ -533,7 +526,7 @@ class Vampiro2Boss(VampiroBoss):
 
 
 class Vampiro3Boss(VampiroBoss):
-    def __init__(self, x, y):
+    def __init__(atributo, x, y):
         super().__init__(x, y,
                          vampiro3_andando_frames,
                          vampiro3_ataque_frames,
@@ -543,17 +536,19 @@ class Vampiro3Boss(VampiroBoss):
 
 def gerar_orcs_em_faixas(qtd=3):
     orcs = []
-    for _ in range(qtd):
+    faixa = random.choice(faixas_x)
+    x = faixa - 128
+    y = random.randint(-600, -100)
+    x = max(0, min(x, tela_largura - 256))
+    orcs.append(Orc3Enemy(x, y))
+
+    for _ in range(qtd - 1):
         faixa = random.choice(faixas_x)
         x = faixa - 128
         y = random.randint(-600, -100)
         x = max(0, min(x, tela_largura - 256))
 
-        tipo_orc = random.choices(
-            ['orc1', 'orc2', 'orc3'],
-            weights=[0.5, 0.3, 0.2],
-            k=1
-        )[0]
+        tipo_orc = random.choices(['orc1', 'orc2', 'orc3'], weights=[0.4, 0.3, 0.3], k=1)[0]
 
         if tipo_orc == 'orc1':
             orc = Orc1Enemy(x, y)
