@@ -1108,4 +1108,115 @@ def game():
                     orcs = novos_orcs
 
         atualiza_tiros(dt, orcs)
+
+        if jogador_movendo:
+            player_frame_timer += dt
+            if player_frame_timer >= frame_delay:
+                player_frame_index = (player_frame_index + 1) % 3
+                player_frame_timer = 0
+        else:
+            player_frame_index = 1
+
+        if estado_de_jogo.player_morto:
+            tempo_passado = pygame.time.get_ticks() - estado_de_jogo.player_morto_timer
+            progesso = tempo_passado / estado_de_jogo.player_morto_duracao
+            estado_de_jogo.player_morto_frame_index = min(int(progesso * len(player_frames_morte[player_dir])),len(player_frames_morte[player_dir]) - 1)
+            frame = player_frames_morte[player_dir][estado_de_jogo.player_morto_frame_index]
+
+        elif estado_de_jogo.player_machucado:
+            tempo_atual = pygame.time.get_ticks()
+            if tempo_atual - estado_de_jogo.player_machucado_timer >= estado_de_jogo.player_machucado_duracao:
+                estado_de_jogo.player_machucado = False
+                estado_de_jogo.player_machucado_frame_index = 0
+                estado_de_jogo.player_machucado_frame_timer = 0
+                frame = player_sprites[player_dir][player_frame_index]
+            else:
+                estado_de_jogo.player_machucado_frame_timer += dt
+                if estado_de_jogo.player_machucado_frame_timer >= estado_de_jogo.player_machucado_frame_delay:
+                    estado_de_jogo.player_machucado_frame_index = (estado_de_jogo.player_machucado_frame_index + 1) % len(player_machucado_frames[player_dir])
+                    estado_de_jogo.player_machucado_frame_timer = 0
+                frame = player_machucado_frames[player_dir][estado_de_jogo.player_machucado_frame_index]
+
+        elif estado_de_jogo.atacando:
+            tempo_atual = pygame.time.get_ticks()
+            progesso = (tempo_atual - estado_de_jogo.ataque_timer) / estado_de_jogo.duracao_do_ataque
+            lista_frames = player_ataque_frames[player_dir]
+            estado_de_jogo.ataque_frame_index = min(int(progesso * len(lista_frames)), len(lista_frames) - 1)
+            frame = lista_frames[estado_de_jogo.ataque_frame_index]
+
+            if tempo_atual - estado_de_jogo.ataque_timer >= estado_de_jogo.duracao_do_ataque:
+                estado_de_jogo.atacando = False
+
+        else:
+            frame = player_sprites[player_dir][player_frame_index]
+
+        if estado_de_jogo.imune_a_explosao:
+            raio_aura = 80
+            aura_superficie = pygame.Surface((raio_aura * 2, raio_aura * 2), pygame.SRCALPHA)
+            pygame.draw.circle(aura_superficie, (255, 255, 0, 40), (raio_aura, raio_aura), raio_aura - 5)
+            tela.blit(aura_superficie, (centro_x - raio_aura, centro_y - raio_aura))
+
+        pygame.draw.rect(tela, (255, 0, 0), player_hitbox, 2)
+
+        HUD(tela)
+
+        for orc in orcs:
+            if isinstance(orc, VampiroBoss) and not orc.morto:
+                orc.ataque_especial()
+                orc.barra_vida(tela)
+
+        player_rect = pygame.Rect(player_x + 48, player_y + 48, 128, 128)
+
+        if estado_de_jogo.player_morto and pygame.time.get_ticks() - estado_de_jogo.player_morto_timer >= estado_de_jogo.player_morto_duracao:
+            game_over_tela()
+            return
+
+
+
+        if estado_de_jogo.mostra_mensagem_onda:
+            texto_onda = my_font.render(f"WAVE {estado_de_jogo.onda}", True, (255, 255, 255))
+            tela.blit(texto_onda, (tela_largura // 2 - 80, 80))
+            if pygame.time.get_ticks() - estado_de_jogo.timer_mensagem_onda > 2000:
+                estado_de_jogo.mostra_mensagem_onda = False
+
+        for efeito in efeitos_especiais[:]:
+            if (efeito['x'] < 0 or efeito['x'] > tela_largura or
+                efeito['y'] < 0 or efeito['y'] > tela_altura):
+                efeitos_especiais.remove(efeito)
+                continue
+
+            tempo_passado = pygame.time.get_ticks() - efeito['timer']
+            alpha = max(0, min(255, 255 - int(255 * (tempo_passado / 1000))))
+            raio = min(480, max(1, 6 + (tempo_passado // 100)))
+
+            superficie = pygame.Surface((raio, raio), pygame.SRCALPHA)
+            pygame.draw.circle(superficie, (255, 0, 0, alpha), (raio, raio), raio*10)
+            tela.blit(superficie, (efeito['x'], efeito['y']))
+
+            efeito['x'] += efeito['dx']
+            efeito['y'] += efeito['dy']
+
+            player_rect = pygame.Rect(player_x + 48, player_y + 48, 64, 64)
+            effect_rect = pygame.Rect(efeito['x'], efeito['y'], 12, 12)
+            if effect_rect.colliderect(player_rect):
+                ignora_imunidade = efeito.get('ignora_imunidade', False)
+                if ignora_imunidade or not estado_de_jogo.imune_a_explosao:
+                    now = pygame.time.get_ticks()
+                    if now - estado_de_jogo.dano_timer >= 100:  # Reduzido de dano_intervalo (2000) para 100ms
+                        estado_de_jogo.HP -= efeito['dano']
+                        estado_de_jogo.dano_timer = now
+                        estado_de_jogo.player_machucado = True
+                        estado_de_jogo.player_machucado_timer = now
+                        estado_de_jogo.player_machucado_frame_index = 0
+                        estado_de_jogo.player_machucado_frame_timer = 0
+                        if estado_de_jogo.HP <= 0:
+                            estado_de_jogo.player_morto = True
+                        # Não remover efeito aqui, permitindo múltiplos danos
+
+            pygame.draw.circle(tela, (255, 0, 0), (int(efeito['x']), int(efeito['y'])), 6)
+            pygame.draw.rect(tela, (0, 0, 255), pygame.Rect(efeito['x'], efeito['y'], 12, 12), 2)
+
         
+        tela.blit(overlay_castelo, (0, tela_altura - overlay_castelo.get_height()))
+        vida_castelo(tela)
+        pygame.display.flip()
