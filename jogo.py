@@ -84,17 +84,9 @@ imagem_moeda = pygame.transform.scale(imagem_moeda, (32, 32))
 imagem_barril = pygame.image.load(direcao_relativa('itens/barrel.png'))
 imagem_barril = pygame.transform.scale(imagem_barril, (64, 64))
 
-def tocar_overworld():
-    pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Música de fundo em loop 
-    pygame.mixer.music.play(loops=-1)
-def tocar_boss():
-    pygame.mixer.music.fadeout(1000)
-    pygame.mixer.music.load('Sons\Boss_fight_zelda.mp3') #Música de fundo em loop 
-    pygame.mixer.music.play(loops=-1)
-def parar_musica_boss():
-    pygame.mixer.music.fadeout(1000)
-    pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Música de fundo em loop 
-    pygame.mixer.music.play(loops=-1)
+
+pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Música de fundo em loop 
+pygame.mixer.music.play(loops=-1)
 
 pygame.mixer.music.set_volume(0.4)
 espada_som = pygame.mixer.Sound('Sons\sword_cut.mp3')
@@ -102,6 +94,7 @@ som_compra = pygame.mixer.Sound('Sons\purchase_sound.mp3')
 hit_orc_som = pygame.mixer.Sound('Sons\orc_hit.mp3')
 vampiro_hiss = pygame.mixer.Sound('Sons\hiss.mp3')
 explosao_som = pygame.mixer.Sound('Sons\explosion.mp3')
+boss_fight = pygame.mixer.Sound('Sons\Boss_fight_zelda.mp3')
 
 def carrega_orc_frames(sheet, largura_frame=64, altura_frame=64, escala=4, linhas=4, colunas=6):
     direcoes = ['baixo', 'cima', 'esquerda', 'direita']
@@ -721,12 +714,11 @@ def game():
     estado_de_jogo.velocidade_player = 5
 
     while funcionando:
-        if estado_de_jogo.onda == 1:
-            tocar_overworld()
-        elif estado_de_jogo.onda == 3 or estado_de_jogo.onda == 6 or estado_de_jogo.onda == 9:
-            tocar_boss()
+        if estado_de_jogo.onda == 3 or estado_de_jogo.onda == 6 or estado_de_jogo.onda == 9:
+            pygame.mixer.music.fadeout(1000)
+            boss_fight.play(loops=-1)
         elif estado_de_jogo.onda == 4 or estado_de_jogo.onda == 7:
-            tocar_overworld()
+            pygame.mixer.music.play()
         if estado_de_jogo.player_morto:
             if pygame.time.get_ticks() - estado_de_jogo.player_morto_timer >= estado_de_jogo.player_morto_duracao:
                 game_over_tela()
