@@ -19,9 +19,9 @@ num_faixas = 8
 largura_faixa = tela_largura // num_faixas
 faixas_x = [i * largura_faixa + largura_faixa // 2 for i in range(num_faixas)]
 
-my_font = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 32)
-my_font_start = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 20)
-small_font = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 10)
+my_font = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 32)
+my_font_start = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 20)
+small_font = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 10)
 
 tela_de_inicio = pygame.image.load(direcao_relativa('imagens/fundo.png'))
 tela_de_inicio = pygame.transform.scale(tela_de_inicio, (tela_largura, tela_altura))
@@ -632,7 +632,7 @@ def HUD(superficie):
     barra_hp = pygame.Rect(20, 20, hp_largura_barra, 30)
     pygame.draw.rect(superficie, (255, 0, 0), barra_hp)
 
-    hud_fonte = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 24)
+    hud_fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 24)
     texto_dinheiro = hud_fonte.render(f"Moedas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 0))
     texto_flechas = hud_fonte.render(f"Flechas: {estado_de_jogo.flechas}", True, (255, 255, 255))
     texto_armas = hud_fonte.render(f"Arma: {estado_de_jogo.arma.upper()}", True, (255, 255, 255))
@@ -645,8 +645,8 @@ def HUD(superficie):
 
 def game_over_tela():
     tela.fill((0, 0, 0))
-    fonte = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 60)
-    fonte_pequena = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 30)
+    fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 60)
+    fonte_pequena = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
     texto_game_over = fonte.render("GAME OVER", True, (255, 0, 0))
     texto_moedas = fonte_pequena.render(f"Moedas coletadas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
