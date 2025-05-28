@@ -1286,12 +1286,12 @@ def atualiza_tiros(dt, orcs):
 def mostra_loja():
     loja_ativa = True
     opcoes = [
-        {"name": "Aumentar Vida (+50)", "custo": 10, "acao": lambda: setattr(estado_de_jogo, 'HP', min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50))},
+        {"name": "Aumentar Vida (X50)", "custo": 10, "acao": lambda: setattr(estado_de_jogo, 'HP', min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50))},
         {"name": "Recuperar Vida", "custo": 5, "acao": lambda: setattr(estado_de_jogo, 'HP', estado_de_jogo.max_HP)},
-        {"name": "Mais Flechas (+10)", "custo": 8, "acao": lambda: setattr(estado_de_jogo, 'flechas', estado_de_jogo.flechas + 10)},
+        {"name": "Mais Flechas (X10)", "custo": 8, "acao": lambda: setattr(estado_de_jogo, 'flechas', estado_de_jogo.flechas + 10)},
         {"name": "Aumentar Velocidade", "custo": 15, "acao": lambda: setattr(estado_de_jogo, 'player_velocidade', estado_de_jogo.velocidade_player + 0.5)},
         {"name": "Aumentar Area da Espada", "custo": 12, "acao": lambda: setattr(estado_de_jogo, 'sword_range', estado_de_jogo.alcance_espada + 20)},
-        {"name": "Reparar Castelo (+500)", "custo": 20, "acao": lambda: min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)}
+        {"name": "Reparar Castelo (X500)", "custo": 20, "acao": lambda: min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)}
     ]
     
     if not estado_de_jogo.imune_a_explosao:
