@@ -714,11 +714,7 @@ def game():
 
     while funcionando:
         if estado_de_jogo.onda == 3 or estado_de_jogo.onda == 6 or estado_de_jogo.onda == 9:
-            pygame.mixer.music.fadeout(1000)
-            boss_fight.play(loops=-1)
-        elif estado_de_jogo.onda != 3 and estado_de_jogo.onda != 6 and estado_de_jogo.onda !=9 :
-            boss_fight.fadeout(1000)
-            pygame.mixer.music.play(loops=-1)
+            boss_fight.play()
         if estado_de_jogo.player_morto:
             if pygame.time.get_ticks() - estado_de_jogo.player_morto_timer >= estado_de_jogo.player_morto_duracao:
                 game_over_tela()
