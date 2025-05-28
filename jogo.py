@@ -1304,7 +1304,8 @@ def mostra_loja():
 
     while loja_ativa:
         tela.blit(loja, (0, 0))
-        moedas_texto = opcao_fonte.render(f"Moedas* {estado_de_jogo.moedas_ganhas}", True, (255, 255, 0))  # Amarelo
+        fonte_menor = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 20)
+        moedas_texto = fonte_menor.render(f"Moedas* {estado_de_jogo.moedas_ganhas}", True, (255, 140, 0))
         tela.blit(moedas_texto, (tela_largura // 2 - moedas_texto.get_width() // 2 + 4, 210))
         pygame.display.flip()
 
