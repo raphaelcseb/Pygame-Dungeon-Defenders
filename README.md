@@ -1,7 +1,16 @@
 # Pygame-Dungeon-Defenders
 # Membros do grupo - Daniel Gozzi Fernandes, Diego Freire Leme de Almeida e Raphael Cintra Silva Eloy Bagnariolli
 
-### Como rodar o jogo - Para rodar o jogo é necessário 
+### Como rodar o jogo  Para rodar o jogo é necessário apenas apertar o botão de 'run' no canto superior direito da tela
+
+### Comandos:
+Trocar de arma: 
+Apertar 1 - Espada
+Apertar 2 - Arco
+Atacar: Apertar espaço
+Comprar itens na loja: Apertar número corresponde ao do item no teclado
+Movimento: Setas
+
 ### Link do Video apresentando o jogo - 
 
 ### No jogo Dungeon Defenders, você é um lutador com o objetivo de defender o castelo, localizado na parte inferior da tela. O castelo possui uma barra de vida: fique atento, pois, se ela chegar a zero, você perderá a partida. O jogo é composto de rodadas (waves); em cada rodada, nascem vários inimigos, e ela só acaba quando todos forem derrotados.
