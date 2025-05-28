@@ -633,10 +633,10 @@ def HUD(superficie):
     pygame.draw.rect(superficie, (255, 0, 0), barra_hp)
 
     hud_fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 24)
-    texto_dinheiro = hud_fonte.render(f"Moedas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 0))
-    texto_flechas = hud_fonte.render(f"Flechas: {estado_de_jogo.flechas}", True, (255, 255, 255))
-    texto_armas = hud_fonte.render(f"Arma: {estado_de_jogo.arma.upper()}", True, (255, 255, 255))
-    texto_wave = hud_fonte.render(f"Onda: {estado_de_jogo.onda}", True, (255, 255, 255))
+    texto_dinheiro = hud_fonte.render(f"Moedas* {estado_de_jogo.moedas_ganhas}", True, (255, 255, 0))
+    texto_flechas = hud_fonte.render(f"Flechas* {estado_de_jogo.flechas}", True, (255, 255, 255))
+    texto_armas = hud_fonte.render(f"Arma* {estado_de_jogo.arma.upper()}", True, (255, 255, 255))
+    texto_wave = hud_fonte.render(f"Onda* {estado_de_jogo.onda}", True, (255, 255, 255))
 
     superficie.blit(texto_dinheiro, (20, 60))
     superficie.blit(texto_flechas, (20, 90))
@@ -1292,19 +1292,19 @@ def atualiza_tiros(dt, orcs):
 def mostra_loja():
     loja_ativa = True
     opcoes = [
-        {"name": "Aumentar Vida (+50)", "cost": 10, "action": lambda: setattr(estado_de_jogo, 'HP', min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50))},
-        {"name": "Recuperar Vida", "cost": 5, "action": lambda: setattr(estado_de_jogo, 'HP', estado_de_jogo.max_HP)},
-        {"name": "Mais Flechas (+10)", "cost": 8, "action": lambda: setattr(estado_de_jogo, 'flechas', estado_de_jogo.flechas + 10)},
-        {"name": "Aumentar Velocidade", "cost": 15, "action": lambda: setattr(estado_de_jogo, 'player_velocidade', estado_de_jogo.velocidade_player + 0.5)},
-        {"name": "Aumentar Area da Espada", "cost": 12, "action": lambda: setattr(estado_de_jogo, 'sword_range', estado_de_jogo.alcance_espada + 20)},
-        {"name": "Reparar Castelo (+500)", "cost": 20, "action": lambda: min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)}
+        {"name": "Aumentar Vida (+50)", "custo": 10, "acao": lambda: setattr(estado_de_jogo, 'HP', min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50))},
+        {"name": "Recuperar Vida", "custo": 5, "acao": lambda: setattr(estado_de_jogo, 'HP', estado_de_jogo.max_HP)},
+        {"name": "Mais Flechas (+10)", "custo": 8, "acao": lambda: setattr(estado_de_jogo, 'flechas', estado_de_jogo.flechas + 10)},
+        {"name": "Aumentar Velocidade", "custo": 15, "acao": lambda: setattr(estado_de_jogo, 'player_velocidade', estado_de_jogo.velocidade_player + 0.5)},
+        {"name": "Aumentar Area da Espada", "custo": 12, "acao": lambda: setattr(estado_de_jogo, 'sword_range', estado_de_jogo.alcance_espada + 20)},
+        {"name": "Reparar Castelo (+500)", "custo": 20, "acao": lambda: min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)}
     ]
     
     if not estado_de_jogo.imune_a_explosao:
         opcoes.append({
             "name": "Imunidade Permanente a Explosões", 
-            "cost": 50, 
-            "action": lambda: [setattr(estado_de_jogo, 'immune_to_explosions', True)]})
+            "custo": 50, 
+            "acao": lambda: [setattr(estado_de_jogo, 'immune_to_explosions', True)]})
 
     opcao_fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
@@ -1328,9 +1328,9 @@ def mostra_loja():
                     opcao_index = evento.key - pygame.K_1
                     if opcao_index < len(opcoes):
                         opcao = opcoes[opcao_index]
-                        if estado_de_jogo.moedas_ganhas >= opcao['cost']:
-                            estado_de_jogo.moedas_ganhas -= opcao['cost']
-                            resultado = opcao['action']()
+                        if estado_de_jogo.moedas_ganhas >= opcao['custo']:
+                            estado_de_jogo.moedas_ganhas -= opcao['custo']
+                            resultado = opcao['acao']()
 
                             texto_de_feedback = opcao_fonte.render(f"Comprado: {opcao['name']}", True, (0, 255, 0))
                             tela.blit(texto_de_feedback, (tela_largura // 2 - texto_de_feedback.get_width() // 2, comeco_y + len(opcoes)*opcao_espaco + 380))
