@@ -98,6 +98,8 @@ pygame.mixer.music.set_volume(0.4)
 espada_som = pygame.mixer.Sound('Sons\sword_cut.mp3')
 som_compra = pygame.mixer.Sound('Sons\purchase_sound.mp3')
 hit_orc_som = pygame.mixer.Sound('Sons\orc_hit.mp3')
+vampiro_hiss = pygame.mixer.Sound('Sons\hiss.mp3')
+explosao_som = pygame.mixer.Sound('Sons\explosion.mp3')
 
 def carrega_orc_frames(sheet, largura_frame=64, altura_frame=64, escala=4, linhas=4, colunas=6):
     direcoes = ['baixo', 'cima', 'esquerda', 'direita']
@@ -252,7 +254,7 @@ class OrcBase:
         atributo.direcao = 'baixo'
         atributo.ultimo_ataque_castelo = 0
         atributo.intervalo_ataque_castelo = 1000
-
+        atributo.hit_orc_som = hit_orc_som
 
 
     def update(atributo, dt, player_pos):
@@ -350,6 +352,7 @@ class OrcBase:
             atributo.frame_atual = atributo.andando_frames
         elif tipo == "atacar":
             atributo.frame_atual = atributo.frames_ataque
+            atributo.hit_orc_som.play()
         elif tipo == "hurt":
             atributo.frame_atual = atributo.frames_machucado
             atributo.machucado = True
