@@ -647,6 +647,52 @@ def HUD(superficie):
     superficie.blit(texto_armas, (20, 120))
     superficie.blit(texto_wave, (20, 150))
 
+def tela_vitoria():
+    tela.fill((0, 0, 0))
+    fonte_grande = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 60)
+    fonte_pequena = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
+
+    texto_vitoria = fonte_grande.render("VOCÊ VENCEU", True, (255, 255, 0))
+    texto_moedas = fonte_pequena.render(f"Moedas coletadas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
+    texto_restart = fonte_pequena.render("Pressione R para reiniciar ou ESC para sair", True, (255, 255, 255))
+
+    tela.blit(texto_vitoria, (tela_largura // 2 - texto_vitoria.get_width() // 2, tela_altura // 2 - 100))
+    tela.blit(texto_moedas, (tela_largura // 2 - texto_moedas.get_width() // 2, tela_altura // 2))
+    tela.blit(texto_restart, (tela_largura // 2 - texto_restart.get_width() // 2, tela_altura // 2 + 60))
+    pygame.display.flip()
+
+    esperando = True
+    while esperando:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_r:
+                    esperando = False
+
+                    tiros.clear()
+                    itens_dropados.clear()
+                    explosoes.clear()
+                    moedas_ceu.clear()
+                    efeitos_especiais.clear()
+
+                    estado_de_jogo.player_morto = False
+                    estado_de_jogo.HP = estado_de_jogo.max_HP
+                    estado_de_jogo.dano_timer = 0
+                    estado_de_jogo.player_morto_timer = 0
+                    estado_de_jogo.player_morto_frame_index = 0
+                    estado_de_jogo.moedas_ganhas = 0
+                    estado_de_jogo.flechas = 0
+                    estado_de_jogo.onda = 1
+                    estado_de_jogo.hp_castelo = estado_de_jogo.hp_max_castelo
+                    estado_de_jogo.atacando = False
+
+                    game()
+                elif evento.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    exit()
+
 #Tela de Game Over
 def game_over_tela():
     tela.fill((0, 0, 0))
@@ -1085,12 +1131,14 @@ def game():
 
                 qtd_orcs = 5 + estado_de_jogo.onda
                 if estado_de_jogo.onda in [3, 6, 10]:
-                    if estado_de_jogo.onda == 3:
+                    if estado_de_jogo.onda == 10:
+                        tela_vitoria()
+                        return
+                    elif estado_de_jogo.onda == 3:
                         orcs = [Vampiro1Boss(tela_largura // 2 - 128, -300)]
                     elif estado_de_jogo.onda == 6:
                         orcs = [Vampiro2Boss(tela_largura // 2, -300)]
-                    elif estado_de_jogo.onda == 10:
-                        orcs = [Vampiro3Boss(tela_largura // 2, -400)]
+
                 else:
                     novos_orcs = gerar_orcs_em_faixas(qtd_orcs)
                     if not novos_orcs:
