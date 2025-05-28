@@ -249,7 +249,6 @@ class OrcBase:
         atributo.direcao = 'baixo'
         atributo.ultimo_ataque_castelo = 0
         atributo.intervalo_ataque_castelo = 1000
-        atributo.hit_orc_som = hit_orc_som
 
 
     def update(atributo, dt, player_pos):
@@ -347,8 +346,6 @@ class OrcBase:
             atributo.frame_atual = atributo.andando_frames
         elif tipo == "atacar":
             atributo.frame_atual = atributo.frames_ataque
-            atributo.hit_orc_som.play()
-            atributo.vampiro_hiss.play()
         elif tipo == "hurt":
             atributo.frame_atual = atributo.frames_machucado
             atributo.machucado = True
