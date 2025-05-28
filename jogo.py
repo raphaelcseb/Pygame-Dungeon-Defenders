@@ -994,10 +994,8 @@ def game():
             tempo_atual = pygame.time.get_ticks()
             progesso = (tempo_atual - estado_de_jogo.ataque_timer) / estado_de_jogo.duracao_do_ataque
             lista_frames = player_ataque_frames[player_dir]
-            espada_som.play()
             estado_de_jogo.ataque_frame_index = min(int(progesso * len(lista_frames)), len(lista_frames) - 1)
             frame = lista_frames[estado_de_jogo.ataque_frame_index]
-        
 
             if tempo_atual - estado_de_jogo.ataque_timer >= estado_de_jogo.duracao_do_ataque:
                 estado_de_jogo.atacando = False
