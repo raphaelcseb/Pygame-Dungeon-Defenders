@@ -27,3 +27,7 @@ Por último, há um que tem vida média, velocidade média, mas não solta nenhu
 #### Bosses
 Há bosses que surgem nas rodadas 3, 6 e 10 — inimigos com dificuldade crescente e ataques diferentes dos orcs comuns:
 O ataque especial deles consiste em vários tiros que formam três rodadas, alternando o ângulo dos disparos. Após o uso do poder, o boss se cansa por um tempo (aproveite para atacá-lo nesse momento).
+
+### Créditos
+Música de fundo: 'Overworld - A link to the past' - Koji Kondo (Nintendo)
+Música da boss fight: 'Fight with Ganon - A link to the past' - Koji Kondo (Nintendo)
