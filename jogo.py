@@ -1231,4 +1231,51 @@ def nasce_moeda_ceu():
     moeda = itemdropado(x, y, "moeda", caindo=True) 
     moeda.caindo = True
     moeda.spawn_tempo = pygame.time.get_ticks()
-    moedas_ceu.append(moeda)     
+    moedas_ceu.append(moeda)
+
+def atualiza_tiros(dt, orcs):
+    global tiros
+    for tiro in tiros[:]:
+        if tiro['dir'] == 'cima':
+            tiro['y'] -= tiro['velocidade']
+        elif tiro['dir'] == 'baixo':
+            tiro['y'] += tiro['velocidade']
+        elif tiro['dir'] == 'esquerda':
+            tiro['x'] -= tiro['velocidade']
+        elif tiro['dir'] == 'direita':
+            tiro['x'] += tiro['velocidade']
+
+        bala_rect = pygame.Rect(tiro['x'], tiro['y'], 24, 12) if tiro['dir'] in ('esquerda', 'direita') else pygame.Rect(tiro['x'], tiro['y'], 12, 24)
+
+        for orc in orcs[:]:
+            orc_rect = pygame.Rect(orc.x + 64, orc.y + 64, 128, 128)
+            if bala_rect.colliderect(orc_rect):
+                if tiro in tiros:
+                    tiros.remove(tiro)
+
+                if not orc.morto:
+                    orc.hp -= 2
+                    if orc.hp <= 0:
+                        orc.set_animacao("morrer")
+                        if hasattr(orc, "ao_morer"):
+                            itens_dropados.append(orc.ao_morrer())
+                        estado_de_jogo.moedas_ganhas += 1
+                    else:
+                        orc.set_animacao("hurt")
+                break
+
+
+        for item in itens_dropados[:]:
+            if item.tipo == "barril" and bala_rect.colliderect(item.rect):
+                if item.leva_dano():
+                    cria_explosao(item.x + 32, item.y + 32, 150, 25)
+                    itens_dropados.remove(item)
+                if tiro in tiros:
+                    tiros.remove(tiro)
+                break
+
+
+        if (tiro['x'] < 0 or tiro['x'] > tela_largura or tiro['y'] < 0 or tiro['y'] > tela_altura):
+            if tiro in tiros:
+                tiros.remove(tiro)
+            continue
