@@ -85,7 +85,7 @@ imagem_barril = pygame.image.load(direcao_relativa('itens/barrel.png'))
 imagem_barril = pygame.transform.scale(imagem_barril, (64, 64))
 
 
-pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3')
+pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Música de fundo em loop 
 pygame.mixer.music.play(loops=-1)
 
 pygame.mixer.music.set_volume(0.4)
@@ -348,6 +348,7 @@ class OrcBase:
         elif tipo == "atacar":
             atributo.frame_atual = atributo.frames_ataque
             atributo.hit_orc_som.play()
+            atributo.vampiro_hiss.play()
         elif tipo == "hurt":
             atributo.frame_atual = atributo.frames_machucado
             atributo.machucado = True
@@ -430,6 +431,7 @@ class VampiroBoss(OrcBase):
         atributo.bloqueio_depois_do_especial = 0
         atributo.duracao_depois_do_especial = 2500
         atributo.seguir = 150000
+        atributo.vampiro_hiss = vampiro_hiss
         
     def ao_morrer(atributo):
         return itemdropado(atributo.x + 112, atributo.y + 112, "moeda")
@@ -642,7 +644,7 @@ def game_over_tela():
     fonte_pequena = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
     texto_game_over = fonte.render("GAME OVER", True, (255, 0, 0))
-    texto_moedas = fonte_pequena.render(f"Moedas coletadas* {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
+    texto_moedas = fonte_pequena.render(f"Moedas coletadas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
     texto_restart = fonte_pequena.render("Pressione R para reiniciar ou ESC para sair", True, (255, 255, 255))
 
     tela.blit(texto_game_over, (tela_largura // 2 - texto_game_over.get_width() // 2, tela_altura // 2 - 100))
@@ -717,8 +719,9 @@ def game():
         if estado_de_jogo.onda == 3 or estado_de_jogo.onda == 6 or estado_de_jogo.onda == 9:
             pygame.mixer.music.fadeout(1000)
             boss_fight.play(loops=-1)
-        elif estado_de_jogo.onda == 4 or estado_de_jogo.onda == 7:
-            pygame.mixer.music.play()
+        elif estado_de_jogo.onda != 3 and estado_de_jogo.onda != 6 and estado_de_jogo.onda !=9 :
+            boss_fight.fadeout(1000)
+            pygame.mixer.music.play(loops=-1)
         if estado_de_jogo.player_morto:
             if pygame.time.get_ticks() - estado_de_jogo.player_morto_timer >= estado_de_jogo.player_morto_duracao:
                 game_over_tela()
@@ -991,8 +994,10 @@ def game():
             tempo_atual = pygame.time.get_ticks()
             progesso = (tempo_atual - estado_de_jogo.ataque_timer) / estado_de_jogo.duracao_do_ataque
             lista_frames = player_ataque_frames[player_dir]
+            espada_som.play()
             estado_de_jogo.ataque_frame_index = min(int(progesso * len(lista_frames)), len(lista_frames) - 1)
             frame = lista_frames[estado_de_jogo.ataque_frame_index]
+        
 
             if tempo_atual - estado_de_jogo.ataque_timer >= estado_de_jogo.duracao_do_ataque:
                 estado_de_jogo.atacando = False
@@ -1064,7 +1069,7 @@ def game():
         orcs = [orc for orc in orcs if not orc.animacao_de_morte]
 
         if not orcs:
-            estado_de_jogo.onda_timer += dt * 1000
+            estado_de_jogo.onda_timer += dt * 1000  # Ajustar para milissegundos
             if estado_de_jogo.onda_timer >= estado_de_jogo.cooldown_onda:
                 estado_de_jogo.onda += 1
                 estado_de_jogo.onda_timer = 0
@@ -1198,7 +1203,7 @@ def game():
                 ignora_imunidade = efeito.get('ignora_imunidade', False)
                 if ignora_imunidade or not estado_de_jogo.imune_a_explosao:
                     now = pygame.time.get_ticks()
-                    if now - estado_de_jogo.dano_timer >= 100:
+                    if now - estado_de_jogo.dano_timer >= 100:  # Reduzido de dano_intervalo (2000) para 100ms
                         estado_de_jogo.HP -= efeito['dano']
                         estado_de_jogo.dano_timer = now
                         estado_de_jogo.player_machucado = True
@@ -1207,6 +1212,7 @@ def game():
                         estado_de_jogo.player_machucado_frame_timer = 0
                         if estado_de_jogo.HP <= 0:
                             estado_de_jogo.player_morto = True
+                        # Não remover efeito aqui, permitindo múltiplos danos
 
             pygame.draw.circle(tela, (255, 0, 0), (int(efeito['x']), int(efeito['y'])), 6)
             pygame.draw.rect(tela, (0, 0, 255), pygame.Rect(efeito['x'], efeito['y'], 12, 12), 2)
@@ -1278,25 +1284,25 @@ def atualiza_tiros(dt, orcs):
 def mostra_loja():
     loja_ativa = True
     opcoes = [
-        {"name": "Aumentar Vida (X50)", "custo": 10, "acao": lambda: setattr(estado_de_jogo, 'HP', min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50))},
+        {"name": "Aumentar Vida (+50)", "custo": 10, "acao": lambda: setattr(estado_de_jogo, 'HP', min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50))},
         {"name": "Recuperar Vida", "custo": 5, "acao": lambda: setattr(estado_de_jogo, 'HP', estado_de_jogo.max_HP)},
-        {"name": "Mais Flechas (X10)", "custo": 8, "acao": lambda: setattr(estado_de_jogo, 'flechas', estado_de_jogo.flechas + 10)},
+        {"name": "Mais Flechas (+10)", "custo": 8, "acao": lambda: setattr(estado_de_jogo, 'flechas', estado_de_jogo.flechas + 10)},
         {"name": "Aumentar Velocidade", "custo": 15, "acao": lambda: setattr(estado_de_jogo, 'player_velocidade', estado_de_jogo.velocidade_player + 0.5)},
         {"name": "Aumentar Area da Espada", "custo": 12, "acao": lambda: setattr(estado_de_jogo, 'sword_range', estado_de_jogo.alcance_espada + 20)},
-        {"name": "Reparar Castelo (X500)", "custo": 20, "acao": lambda: min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)}
+        {"name": "Reparar Castelo (+500)", "custo": 20, "acao": lambda: min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)}
     ]
     
     if not estado_de_jogo.imune_a_explosao:
         opcoes.append({
             "name": "Imunidade Permanente a Explosões", 
             "custo": 50, 
-            "acao": lambda: [setattr(estado_de_jogo, 'imune_a_explosões', True)]})
+            "acao": lambda: [setattr(estado_de_jogo, 'immune_to_explosions', True)]})
 
     opcao_fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
     while loja_ativa:
         tela.blit(loja, (0, 0))
-        moedas_texto = opcao_fonte.render(f"Moedas* {estado_de_jogo.moedas_ganhas}", True, (255, 255, 0))
+        moedas_texto = opcao_fonte.render(f"Moedas* {estado_de_jogo.moedas_ganhas}", True, (255, 255, 0))  # Amarelo
         tela.blit(moedas_texto, (tela_largura // 2 - moedas_texto.get_width() // 2 + 4, 210))
         pygame.display.flip()
 
@@ -1318,7 +1324,7 @@ def mostra_loja():
                             estado_de_jogo.moedas_ganhas -= opcao['custo']
                             resultado = opcao['acao']()
 
-                            texto_de_feedback = opcao_fonte.render(f"Comprado* {opcao['name']}", True, (0, 255, 0))
+                            texto_de_feedback = opcao_fonte.render(f"Comprado: {opcao['name']}", True, (0, 255, 0))
                             tela.blit(texto_de_feedback, (tela_largura // 2 - texto_de_feedback.get_width() // 2, comeco_y + len(opcoes)*opcao_espaco + 380))
                             pygame.display.flip()
                             pygame.time.delay(1500) 
