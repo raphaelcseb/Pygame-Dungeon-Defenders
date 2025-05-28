@@ -94,7 +94,7 @@ imagem_moeda = pygame.transform.scale(imagem_moeda, (32, 32))
 imagem_barril = pygame.image.load(direcao_relativa('itens/barrel.png'))
 imagem_barril = pygame.transform.scale(imagem_barril, (64, 64))
 
-# Sons do jogo
+#sons do jogo
 pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Música de fundo em loop 
 pygame.mixer.music.play(loops=-1)
 
@@ -106,7 +106,7 @@ vampiro_hiss = pygame.mixer.Sound('Sons\hiss.mp3')
 explosao_som = pygame.mixer.Sound('Sons\explosion.mp3')
 boss_fight = pygame.mixer.Sound('Sons\Boss_fight_zelda.mp3')
 
-# - Carregamento dos frames de animação (andar, atacar, machucado, morrer)
+#carregamento dos frames de animação (andar, atacar, machucado, morrer)
 
 
 def carrega_orc_frames(sheet, largura_frame=64, altura_frame=64, escala=4, linhas=4, colunas=6):
@@ -182,7 +182,7 @@ vampiro3_ataque_frames = carrega_orc_frames(vampiro3_ataque_sprites)
 vampiro3_machucado_frames = carrega_orc_frames(vampiro3_machucado_sprites, colunas=4)
 vampiro3_morte_frames = carrega_orc_frames(vampiro3_morte_sprites, colunas=11)
 
-# Definição das classes: ItemDropado, Orcs, Vampiros e Bosses
+#Definição das classes: ItemDropado, Orcs, Vampiros e Bosses
 
 
 class itemdropado:
@@ -275,6 +275,7 @@ class OrcBase:
                 else:
                     atributo.animacao_de_morte = True
             return
+        #Gerado com Copilot
 
         if getattr(atributo, "post_special_block", False):
             return
@@ -344,6 +345,7 @@ class OrcBase:
         else:
             superficie.blit(frame, (atributo.x, atributo.y))
 
+    #função para as animações do jogo
     def set_animacao(atributo, tipo):
         if atributo.morto:
             return
@@ -361,6 +363,7 @@ class OrcBase:
             atributo.morto = True
             atributo.frame_index = 0
             atributo.morto_timer = pygame.time.get_ticks()
+            #25% gerado por Copilot
 
 #Orcs
 class Orc1Enemy(OrcBase):
@@ -455,6 +458,7 @@ class VampiroBoss(OrcBase):
             }
             efeitos_especiais.append(projetil)
 
+    #Ataque especial dos bosses
     def ataque_especial(atributos):
         now = pygame.time.get_ticks()
 
@@ -467,6 +471,7 @@ class VampiroBoss(OrcBase):
                 atributos.ataque_em_circulo(angulos=offset)
                 atributos.tempo_do_ultimo_ataque = now
                 atributos.fase_ataque_especial += 1
+                #gerado com Copilot
 
                 if atributos.fase_ataque_especial == 3:
                     atributos.timer_depois_ataque = now
@@ -540,6 +545,7 @@ class Vampiro3Boss(VampiroBoss):
                          vampiro3_morte_frames,
                          level=3)
 
+#Spawn aleatório dos orcs
 def gerar_orcs_em_faixas(qtd=3):
     orcs = []
     faixa = random.choice(faixas_x)
@@ -553,6 +559,7 @@ def gerar_orcs_em_faixas(qtd=3):
         x = faixa - 128
         y = random.randint(-600, -100)
         x = max(0, min(x, tela_largura - 256))
+        #Gerado com Copilot
 
         tipo_orc = random.choices(['orc1', 'orc2', 'orc3'], weights=[0.4, 0.3, 0.3], k=1)[0]
 
@@ -647,6 +654,7 @@ def HUD(superficie):
     superficie.blit(texto_armas, (20, 120))
     superficie.blit(texto_wave, (20, 150))
 
+#Tela de vitória
 def tela_vitoria():
     tela.fill((0, 0, 0))
     fonte_grande = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 60)
@@ -660,6 +668,7 @@ def tela_vitoria():
     tela.blit(texto_moedas, (tela_largura // 2 - texto_moedas.get_width() // 2, tela_altura // 2))
     tela.blit(texto_restart, (tela_largura // 2 - texto_restart.get_width() // 2, tela_altura // 2 + 60))
     pygame.display.flip()
+    # 40% gerado com Copilot
 
     esperando = True
     while esperando:
@@ -801,6 +810,7 @@ def game():
 
         tela.blit(imagem_de_fundo, (0, 0))
 
+        #Eventos e ações do jogador
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -821,7 +831,8 @@ def game():
                         player_center_y = player_hitbox.centery
                         largura_ataque = estado_de_jogo.alcance_espada
                         altura_ataque = 80 + estado_de_jogo.alcance_espada
-
+                        
+                        #Movimentação para cima
                         if player_dir == 'cima':
                             ataque_rect = pygame.Rect(
                                 player_center_x - largura_ataque // 2,
@@ -833,6 +844,7 @@ def game():
                             estado_de_jogo.ataque_timer = pygame.time.get_ticks()
                             estado_de_jogo.ataque_frame_index = 0
 
+                        #Movimentação para baixo
                         elif player_dir == 'baixo':
                             ataque_rect = pygame.Rect(
                                 player_center_x - largura_ataque // 2,
@@ -843,7 +855,8 @@ def game():
                             estado_de_jogo.atacando = True
                             estado_de_jogo.ataque_timer = pygame.time.get_ticks()
                             estado_de_jogo.ataque_frame_index = 0
-
+                        
+                        #Movimentação para a esquerda
                         elif player_dir == 'esquerda':
                             ataque_rect = pygame.Rect(
                                 player_center_x - altura_ataque,
@@ -855,6 +868,7 @@ def game():
                             estado_de_jogo.ataque_timer = pygame.time.get_ticks()
                             estado_de_jogo.ataque_frame_index = 0
 
+                        #Movimentação para a direita
                         elif player_dir == 'direita':
                             ataque_rect = pygame.Rect(
                                 player_center_x,
@@ -886,7 +900,8 @@ def game():
                                     cria_explosao(item.x + 32, item.y + 32, 150, 25)
                                     itens_dropados.remove(item)
                                 break
-
+                    
+                    #Codando o arco e flecha
                     elif estado_de_jogo.arma == 'arco' and estado_de_jogo.flechas > 0:
                         tempo_atual = pygame.time.get_ticks()
                         if tempo_atual - ultimo_tiro >= cooldown_tiro:
@@ -928,6 +943,7 @@ def game():
                             estado_de_jogo.flechas -= 1
                             ultimo_tiro = tempo_atual
 
+        # Movimentos do jogador
         jogador_movendo = False
         tecla = pygame.key.get_pressed()
         if (tecla[pygame.K_LEFT] or tecla[pygame.K_a]) and player_x > 0:
@@ -950,7 +966,8 @@ def game():
             player_y += estado_de_jogo.velocidade_player
             player_dir = 'baixo'
             jogador_movendo = True
-
+        
+        #Seção 42% gerada com Copilot
 
         hitbox_largura = 64
         hitbox_altura = 80
@@ -1261,9 +1278,11 @@ def game():
                         estado_de_jogo.player_machucado_frame_timer = 0
                         if estado_de_jogo.HP <= 0:
                             estado_de_jogo.player_morto = True
+
                         
                     efeitos_especiais.remove(efeito)
                     continue
+            #gerado 50% com Copilot
 
 
             pygame.draw.circle(tela, (255, 0, 0), (int(efeito['x']), int(efeito['y'])), 6)
@@ -1275,6 +1294,7 @@ def game():
 #Explosão do barril
 def cria_explosao(x, y, raio, dano):
     explosoes.append({'x': x,'y': y,'radius': raio * 1.5,'dano': dano,'timer': pygame.time.get_ticks(),'duration': 500})
+    #feito com copilot
 
 #Spawn de moedas
 def nasce_moeda_ceu():
@@ -1297,6 +1317,7 @@ def atualiza_tiros(dt, orcs):
             tiro['x'] -= tiro['velocidade']
         elif tiro['dir'] == 'direita':
             tiro['x'] += tiro['velocidade']
+        #feito com copilot
 
         bala_rect = pygame.Rect(tiro['x'], tiro['y'], 24, 12) if tiro['dir'] in ('esquerda', 'direita') else pygame.Rect(tiro['x'], tiro['y'], 12, 24)
 
