@@ -1334,3 +1334,23 @@ def mostra_loja():
                                 estado_de_jogo.HP = estado_de_jogo.max_HP
                             elif opcao['name'].startswith("Reparar Castelo"):
                                 estado_de_jogo.hp_castelo = min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)
+
+def start_tela():
+    while estado_de_jogo.game_start_tela:
+        tela.blit(tela_de_inicio, (0, 0))
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    estado_de_jogo.game_start_tela = False
+                    game()
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    return
+
+if __name__ == "__main__":
+    start_tela()
