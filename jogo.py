@@ -652,8 +652,8 @@ def tela_vitoria():
     fonte_grande = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 60)
     fonte_pequena = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
-    texto_vitoria = fonte_grande.render("VOCÊ VENCEU", True, (255, 255, 0))
-    texto_moedas = fonte_pequena.render(f"Moedas coletadas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
+    texto_vitoria = fonte_grande.render("VOCE VENCEU", True, (255, 255, 0))
+    texto_moedas = fonte_pequena.render(f"Moedas coletadas* {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
     texto_restart = fonte_pequena.render("Pressione R para reiniciar ou ESC para sair", True, (255, 255, 255))
 
     tela.blit(texto_vitoria, (tela_largura // 2 - texto_vitoria.get_width() // 2, tela_altura // 2 - 100))
@@ -700,7 +700,7 @@ def game_over_tela():
     fonte_pequena = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
     texto_game_over = fonte.render("GAME OVER", True, (255, 0, 0))
-    texto_moedas = fonte_pequena.render(f"Moedas coletadas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
+    texto_moedas = fonte_pequena.render(f"Moedas coletadas* {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
     texto_restart = fonte_pequena.render("Pressione R para reiniciar ou ESC para sair", True, (255, 255, 255))
 
     tela.blit(texto_game_over, (tela_largura // 2 - texto_game_over.get_width() // 2, tela_altura // 2 - 100))
@@ -711,9 +711,10 @@ def game_over_tela():
     esperando = True
     while esperando:
         for evento in pygame.event.get():
-            if evento.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    exit()
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_r:
                     esperando = False
@@ -1130,15 +1131,16 @@ def game():
                 tiros.clear()
 
                 qtd_orcs = 5 + estado_de_jogo.onda
-                if estado_de_jogo.onda in [3, 6, 10]:
-                    if estado_de_jogo.onda == 10:
+                if estado_de_jogo.onda in [3, 6, 10, 11]:
+                    if estado_de_jogo.onda == 11:
                         tela_vitoria()
                         return
                     elif estado_de_jogo.onda == 3:
                         orcs = [Vampiro1Boss(tela_largura // 2 - 128, -300)]
                     elif estado_de_jogo.onda == 6:
-                        orcs = [Vampiro2Boss(tela_largura // 2, -300)]
-
+                        orcs = [Vampiro2Boss(tela_largura // 2 - 128, -300)]
+                    elif estado_de_jogo.onda == 10:
+                        orcs = [Vampiro3Boss(tela_largura // 2 - 128, -300)]
                 else:
                     novos_orcs = gerar_orcs_em_faixas(qtd_orcs)
                     if not novos_orcs:
@@ -1333,60 +1335,57 @@ def atualiza_tiros(dt, orcs):
 
 #Mostrando a loja na tela entre as ondas
 def mostra_loja():
-    loja_ativa = True
-    opcoes = [
-        {"name": "Aumentar Vida (X50)", "custo": 10, "acao": lambda: setattr(estado_de_jogo, 'HP', min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50))},
-        {"name": "Recuperar Vida", "custo": 5, "acao": lambda: setattr(estado_de_jogo, 'HP', estado_de_jogo.max_HP)},
-        {"name": "Mais Flechas (X10)", "custo": 8, "acao": lambda: setattr(estado_de_jogo, 'flechas', estado_de_jogo.flechas + 10)},
-        {"name": "Aumentar Velocidade", "custo": 15, "acao": lambda: setattr(estado_de_jogo, 'player_velocidade', estado_de_jogo.velocidade_player + 0.5)},
-        {"name": "Aumentar Area da Espada", "custo": 12, "acao": lambda: setattr(estado_de_jogo, 'sword_range', estado_de_jogo.alcance_espada + 20)},
-        {"name": "Reparar Castelo (X500)", "custo": 20, "acao": lambda: min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)}
-    ]
+    if estado_de_jogo.onda != 11:
+        loja_ativa = True
+        opcoes = [
+            {"name": "Aumentar Vida (X50)", "custo": 10, "acao": lambda: setattr(estado_de_jogo, 'HP', min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50))},
+            {"name": "Recuperar Vida", "custo": 5, "acao": lambda: setattr(estado_de_jogo, 'HP', estado_de_jogo.max_HP)},
+            {"name": "Mais Flechas (X10)", "custo": 8, "acao": lambda: setattr(estado_de_jogo, 'flechas', estado_de_jogo.flechas + 10)},
+            {"name": "Aumentar Velocidade", "custo": 15, "acao": lambda: setattr(estado_de_jogo, 'player_velocidade', estado_de_jogo.velocidade_player + 0.5)},
+            {"name": "Aumentar Area da Espada", "custo": 12, "acao": lambda: setattr(estado_de_jogo, 'sword_range', estado_de_jogo.alcance_espada + 20)},]
     
-    if not estado_de_jogo.imune_a_explosao:
-        opcoes.append({
-            "name": "Imunidade Permanente a Explosões", 
-            "custo": 50, 
-            "acao": lambda: [setattr(estado_de_jogo, 'immune_to_explosions', True)]})
+        if not estado_de_jogo.imune_a_explosao:
+            opcoes.append({
+                "name": "Imunidade Permanente a Explosoes", 
+                "custo": 50, 
+                "acao": lambda: [setattr(estado_de_jogo, 'imune_a_explosao', True)]})
 
-    opcao_fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
+        opcao_fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
-    while loja_ativa:
-        tela.blit(loja, (0, 0))
-        fonte_menor = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 20)
-        moedas_texto = fonte_menor.render(f"Moedas* {estado_de_jogo.moedas_ganhas}", True, (255, 140, 0))
-        tela.blit(moedas_texto, (tela_largura // 2 - moedas_texto.get_width() // 2 + 4, 210))
-        pygame.display.flip()
+        while loja_ativa:
+            tela.blit(loja, (0, 0))
+            fonte_menor = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 20)
+            moedas_texto = fonte_menor.render(f"Moedas* {estado_de_jogo.moedas_ganhas}", True, (255, 140, 0))
+            tela.blit(moedas_texto, (tela_largura // 2 - moedas_texto.get_width() // 2 + 4, 210))
+            pygame.display.flip()
 
-        opcao_espaco = 40
-        comeco_y = 150
+            opcao_espaco = 40
+            comeco_y = 150
 
-        for evento in pygame.event.get():
-            if evento.type == pygame.QUIT:
-                pygame.quit()
-                return
-            if evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_ESCAPE:
-                    loja_ativa = False
-                elif evento.key in (pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7):
-                    opcao_index = evento.key - pygame.K_1
-                    if opcao_index < len(opcoes):
-                        opcao = opcoes[opcao_index]
-                        if estado_de_jogo.moedas_ganhas >= opcao['custo']:
-                            estado_de_jogo.moedas_ganhas -= opcao['custo']
-                            resultado = opcao['acao']()
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+                if evento.type == pygame.KEYDOWN:
+                    if evento.key == pygame.K_ESCAPE:
+                        loja_ativa = False
+                    elif evento.key in (pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6):
+                        opcao_index = evento.key - pygame.K_1
+                        if opcao_index < len(opcoes):
+                            opcao = opcoes[opcao_index]
+                            if estado_de_jogo.moedas_ganhas >= opcao['custo']:
+                                estado_de_jogo.moedas_ganhas -= opcao['custo']
+                                resultado = opcao['acao']()
 
-                            texto_de_feedback = opcao_fonte.render(f"Comprado* {opcao['name']}", True, (0, 255, 0))
-                            tela.blit(texto_de_feedback, (tela_largura // 2 - texto_de_feedback.get_width() // 2, comeco_y + len(opcoes)*opcao_espaco + 380))
-                            pygame.display.flip()
-                            pygame.time.delay(1500) 
+                                texto_de_feedback = opcao_fonte.render(f"Comprado* {opcao['name']}", True, (0, 255, 0))
+                                tela.blit(texto_de_feedback, (tela_largura // 2 - texto_de_feedback.get_width() // 2, comeco_y + len(opcoes)*opcao_espaco + 420))
+                                pygame.display.flip()
+                                pygame.time.delay(1500) 
 
-                            if opcao['name'].startswith("Aumentar Vida"):
-                                estado_de_jogo.HP = min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50)
-                            elif opcao['name'].startswith("Recuperar Vida"):
-                                estado_de_jogo.HP = estado_de_jogo.max_HP
-                            elif opcao['name'].startswith("Reparar Castelo"):
-                                estado_de_jogo.hp_castelo = min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)
+                                if opcao['name'].startswith("Aumentar Vida"):
+                                    estado_de_jogo.HP = min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50)
+                                elif opcao['name'].startswith("Recuperar Vida"):
+                                    estado_de_jogo.HP = estado_de_jogo.max_HP
 
 #Tela de início do jogo
 def start_tela():
