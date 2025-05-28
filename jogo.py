@@ -19,67 +19,69 @@ num_faixas = 8
 largura_faixa = tela_largura // num_faixas
 faixas_x = [i * largura_faixa + largura_faixa // 2 for i in range(num_faixas)]
 
-my_font = pygame.font.Font(direcao_relativa('Font/BACKTO1982.TTF'), 32)
-my_font_start = pygame.font.Font(direcao_relativa('Font/BACKTO1982.TTF'), 20)
-small_font = pygame.font.Font(direcao_relativa('Font/BACKTO1982.TTF'), 10)
+my_font = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 32)
+my_font_start = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 20)
+small_font = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 10)
 
-tela_de_inicio = pygame.image.load(direcao_relativa('Level maps/fundo.png'))
+tela_de_inicio = pygame.image.load(direcao_relativa('imagens/fundo.png'))
 tela_de_inicio = pygame.transform.scale(tela_de_inicio, (tela_largura, tela_altura))
-overlay_castelo = pygame.image.load(direcao_relativa('Level maps/castle overlay.png')).convert_alpha()
+loja = pygame.image.load(direcao_relativa('imagens/loja.png'))
+loja = pygame.transform.scale(loja, (tela_largura, tela_altura))
+overlay_castelo = pygame.image.load(direcao_relativa('imagens/castle overlay.png')).convert_alpha()
 overlay_castelo = pygame.transform.scale(overlay_castelo, (tela_largura, tela_altura))
-imagem_de_fundo = pygame.image.load(direcao_relativa('Level maps/game map.png'))
+imagem_de_fundo = pygame.image.load(direcao_relativa('imagens/game map.png'))
 imagem_de_fundo = pygame.transform.scale(imagem_de_fundo, (tela_largura, tela_altura))
 
-player_folha_sprites = pygame.image.load(direcao_relativa('Animation/jogador/Sword_Walk_full.png'))
-player_ataque_sprites = pygame.image.load(direcao_relativa('Animation/jogador/Sword_attack_full.png'))
-player_machucado_sprites = pygame.image.load(direcao_relativa('Animation/jogador/Sword_Hurt_full.png'))
-player_morto_sprites = pygame.image.load(direcao_relativa('Animation/jogador/Sword_Death_full.png'))
+player_folha_sprites = pygame.image.load(direcao_relativa('animação/jogador/Sword_Walk_full.png'))
+player_ataque_sprites = pygame.image.load(direcao_relativa('animação/jogador/Sword_attack_full.png'))
+player_machucado_sprites = pygame.image.load(direcao_relativa('animação/jogador/Sword_Hurt_full.png'))
+player_morto_sprites = pygame.image.load(direcao_relativa('animação/jogador/Sword_Death_full.png'))
 
-flecha_cima = pygame.image.load(direcao_relativa('Obstacles/flecha_cima.png')).convert_alpha()
+flecha_cima = pygame.image.load(direcao_relativa('itens/flecha_cima.png')).convert_alpha()
 flecha_cima = pygame.transform.scale(flecha_cima, (46, 70))
 
-flecha_baixo = pygame.image.load(direcao_relativa('Obstacles/flecha_baixo.png')).convert_alpha()
+flecha_baixo = pygame.image.load(direcao_relativa('itens/flecha_baixo.png')).convert_alpha()
 flecha_baixo = pygame.transform.scale(flecha_baixo, (46, 70))
 
-flecha_esquerda = pygame.image.load(direcao_relativa('Obstacles/flecha_esquerda.png')).convert_alpha()
+flecha_esquerda = pygame.image.load(direcao_relativa('itens/flecha_esquerda.png')).convert_alpha()
 flecha_esquerda = pygame.transform.scale(flecha_esquerda, (70, 46))
 
-flecha_direita = pygame.image.load(direcao_relativa('Obstacles/flecha_direita.png')).convert_alpha()
+flecha_direita = pygame.image.load(direcao_relativa('itens/flecha_direita.png')).convert_alpha()
 flecha_direita = pygame.transform.scale(flecha_direita, (70, 46))
 
-orc1_machucado_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc1_hurt_full.png'))
-orc1_ataque_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc1_attack_full.png'))
-orc1_corpo_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc1_walk_full.png'))
-orc1_morte_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc1_death_full.png'))
+orc1_machucado_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc1_hurt_full.png'))
+orc1_ataque_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc1_attack_full.png'))
+orc1_corpo_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc1_walk_full.png'))
+orc1_morte_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc1_death_full.png'))
 
-orc2_machucado_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc2_hurt_full.png'))
-orc2_ataque_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc2_attack_full.png'))
-orc2_corpo_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc2_walk_full.png'))
-orc2_morte_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc2_death_full.png'))
+orc2_machucado_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc2_hurt_full.png'))
+orc2_ataque_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc2_attack_full.png'))
+orc2_corpo_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc2_walk_full.png'))
+orc2_morte_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc2_death_full.png'))
 
-orc3_machucado_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc3_hurt_full.png'))
-orc3_ataque_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc3_attack_full.png'))
-orc3_corpo_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc3_walk_full.png'))
-orc3_morte_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/orc3_death_full.png'))
+orc3_machucado_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc3_hurt_full.png'))
+orc3_ataque_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc3_attack_full.png'))
+orc3_corpo_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc3_walk_full.png'))
+orc3_morte_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc3_death_full.png'))
 
-vampiro1_andando_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires1_Walk_full.png'))
-vampiro1_ataque_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires1_Attack_full.png'))
-vampiro1_machucado_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires1_Hurt_full.png'))
-vampiro1_morte_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires1_Death_full.png'))
+vampiro1_andando_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires1_Walk_full.png'))
+vampiro1_ataque_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires1_Attack_full.png'))
+vampiro1_machucado_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires1_Hurt_full.png'))
+vampiro1_morte_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires1_Death_full.png'))
 
-vampiro2_andando_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires2_Walk_full.png'))
-vampiro2_ataque_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires2_Attack_full.png'))
-vampiro2_machucado_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires2_Hurt_full.png'))
-vampiro2_morte_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires2_Death_full.png'))
+vampiro2_andando_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires2_Walk_full.png'))
+vampiro2_ataque_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires2_Attack_full.png'))
+vampiro2_machucado_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires2_Hurt_full.png'))
+vampiro2_morte_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires2_Death_full.png'))
 
-vampiro3_andando_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires3_Walk_full.png'))
-vampiro3_ataque_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires3_Attack_full.png'))
-vampiro3_machucado_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires3_Hurt_full.png'))
-vampiro3_morte_sprites = pygame.image.load(direcao_relativa('Animation/Enemy/Vampires3_Death_full.png'))
+vampiro3_andando_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires3_Walk_full.png'))
+vampiro3_ataque_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires3_Attack_full.png'))
+vampiro3_machucado_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires3_Hurt_full.png'))
+vampiro3_morte_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires3_Death_full.png'))
 
-imagem_moeda = pygame.image.load(direcao_relativa('Obstacles/coin.png'))
+imagem_moeda = pygame.image.load(direcao_relativa('itens/coin.png'))
 imagem_moeda = pygame.transform.scale(imagem_moeda, (32, 32))
-imagem_barril = pygame.image.load(direcao_relativa('Obstacles/barrel.png'))
+imagem_barril = pygame.image.load(direcao_relativa('itens/barrel.png'))
 imagem_barril = pygame.transform.scale(imagem_barril, (64, 64))
 
 def tocar_overworld():
@@ -630,7 +632,7 @@ def HUD(superficie):
     barra_hp = pygame.Rect(20, 20, hp_largura_barra, 30)
     pygame.draw.rect(superficie, (255, 0, 0), barra_hp)
 
-    hud_fonte = pygame.font.Font(direcao_relativa('Font/BACKTO1982.TTF'), 24)
+    hud_fonte = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 24)
     texto_dinheiro = hud_fonte.render(f"Moedas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 0))
     texto_flechas = hud_fonte.render(f"Flechas: {estado_de_jogo.flechas}", True, (255, 255, 255))
     texto_armas = hud_fonte.render(f"Arma: {estado_de_jogo.arma.upper()}", True, (255, 255, 255))
@@ -643,8 +645,8 @@ def HUD(superficie):
 
 def game_over_tela():
     tela.fill((0, 0, 0))
-    fonte = pygame.font.Font(direcao_relativa('Font/BACKTO1982.TTF'), 60)
-    fonte_pequena = pygame.font.Font(direcao_relativa('Font/BACKTO1982.TTF'), 30)
+    fonte = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 60)
+    fonte_pequena = pygame.font.Font(direcao_relativa('fonte/BACKTO1982.TTF'), 30)
 
     texto_game_over = fonte.render("GAME OVER", True, (255, 0, 0))
     texto_moedas = fonte_pequena.render(f"Moedas coletadas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
@@ -1304,7 +1306,7 @@ def mostra_loja():
             "cost": 50, 
             "action": lambda: [setattr(estado_de_jogo, 'immune_to_explosions', True)]})
 
-    opcao_fonte = pygame.font.Font(direcao_relativa('Font/8BIT WONDER.ttf'), 30)
+    opcao_fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
     while loja_ativa:
         tela.blit(loja, (0, 0))
