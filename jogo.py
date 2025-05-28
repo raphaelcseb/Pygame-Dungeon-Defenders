@@ -875,11 +875,6 @@ def game():
                             estado_de_jogo.flechas -= 1
                             ultimo_tiro = tempo_atual
 
-
-                            tiros.append(balas)
-                            estado_de_jogo.flechas -= 1
-                            ultimo_tiro = tempo_atual
-
         jogador_movendo = False
         tecla = pygame.key.get_pressed()
         if (tecla[pygame.K_LEFT] or tecla[pygame.K_a]) and player_x > 0:
