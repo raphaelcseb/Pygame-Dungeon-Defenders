@@ -642,7 +642,7 @@ def game_over_tela():
     fonte_pequena = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
     texto_game_over = fonte.render("GAME OVER", True, (255, 0, 0))
-    texto_moedas = fonte_pequena.render(f"Moedas coletadas: {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
+    texto_moedas = fonte_pequena.render(f"Moedas coletadas* {estado_de_jogo.moedas_ganhas}", True, (255, 255, 255))
     texto_restart = fonte_pequena.render("Pressione R para reiniciar ou ESC para sair", True, (255, 255, 255))
 
     tela.blit(texto_game_over, (tela_largura // 2 - texto_game_over.get_width() // 2, tela_altura // 2 - 100))
@@ -1291,7 +1291,7 @@ def mostra_loja():
         opcoes.append({
             "name": "Imunidade Permanente a Explosões", 
             "custo": 50, 
-            "acao": lambda: [setattr(estado_de_jogo, 'immune_to_explosions', True)]})
+            "acao": lambda: [setattr(estado_de_jogo, 'imune_a_explosões', True)]})
 
     opcao_fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 30)
 
@@ -1319,7 +1319,7 @@ def mostra_loja():
                             estado_de_jogo.moedas_ganhas -= opcao['custo']
                             resultado = opcao['acao']()
 
-                            texto_de_feedback = opcao_fonte.render(f"Comprado: {opcao['name']}", True, (0, 255, 0))
+                            texto_de_feedback = opcao_fonte.render(f"Comprado* {opcao['name']}", True, (0, 255, 0))
                             tela.blit(texto_de_feedback, (tela_largura // 2 - texto_de_feedback.get_width() // 2, comeco_y + len(opcoes)*opcao_espaco + 380))
                             pygame.display.flip()
                             pygame.time.delay(1500) 
