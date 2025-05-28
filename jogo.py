@@ -373,7 +373,7 @@ class Orc1Enemy(OrcBase):
         atributo.hp = 2
         atributo.dano = 10
         atributo.tipo = "orc1"
-        atributo.seguir = 300
+        atributo.seguir = 500
         super().__init__(x, y)
 
 class Orc2Enemy(OrcBase):
@@ -386,7 +386,7 @@ class Orc2Enemy(OrcBase):
         atributo.hp = 1
         atributo.dano = 8
         atributo.tipo = "orc2"
-        atributo.seguir = 300
+        atributo.seguir = 500
         super().__init__(x, y)
 
     def ao_morrer(atributo):
@@ -402,7 +402,7 @@ class Orc3Enemy(OrcBase):
         atributo.hp = 3
         atributo.dano = 12
         atributo.tipo = "orc3"
-        atributo.seguir = 300
+        atributo.seguir = 500
         super().__init__(x, y)
 
     def ao_morrer(atributo):
@@ -1211,7 +1211,10 @@ def game():
                         estado_de_jogo.player_machucado_frame_timer = 0
                         if estado_de_jogo.HP <= 0:
                             estado_de_jogo.player_morto = True
-                        # Não remover efeito aqui, permitindo múltiplos danos
+                        
+                    efeitos_especiais.remove(efeito)
+                    continue
+
 
             pygame.draw.circle(tela, (255, 0, 0), (int(efeito['x']), int(efeito['y'])), 6)
             pygame.draw.rect(tela, (0, 0, 255), pygame.Rect(efeito['x'], efeito['y'], 12, 12), 2)
