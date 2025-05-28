@@ -1327,7 +1327,7 @@ def mostra_loja():
                             estado_de_jogo.moedas_ganhas -= opcao['custo']
                             resultado = opcao['acao']()
 
-                            texto_de_feedback = opcao_fonte.render(f"Comprado: {opcao['name']}", True, (0, 255, 0))
+                            texto_de_feedback = opcao_fonte.render(f"Comprado* {opcao['name']}", True, (0, 255, 0))
                             tela.blit(texto_de_feedback, (tela_largura // 2 - texto_de_feedback.get_width() // 2, comeco_y + len(opcoes)*opcao_espaco + 380))
                             pygame.display.flip()
                             pygame.time.delay(1500) 
