@@ -3,26 +3,32 @@ import random
 from pygame import mixer
 from pathlib import Path
 
+# Inicializa pygame e mixer (sons)
 pygame.init()
 pygame.mixer.init()
 
+# Pega tamanho da tela e seta fullscreen
 info = pygame.display.Info()
 tela_largura = info.current_w
 tela_altura = info.current_h
 tela = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 tela_largura, tela_altura = tela.get_size()
 
+# Pega caminho relativo dos arquivos
 def direcao_relativa(dir: str) -> str:
     return Path(__file__).parent.joinpath(dir)
 
+# Define faixas horizontais na tela (onde spawna orcs, etc)
 num_faixas = 8
 largura_faixa = tela_largura // num_faixas
 faixas_x = [i * largura_faixa + largura_faixa // 2 for i in range(num_faixas)]
 
+# Carrega fontes
 my_font = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 32)
 my_font_start = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 20)
 small_font = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 10)
 
+# Carrega imagens de fundo, HUD e mapas
 tela_de_inicio = pygame.image.load(direcao_relativa('imagens/fundo.png'))
 tela_de_inicio = pygame.transform.scale(tela_de_inicio, (tela_largura, tela_altura))
 loja = pygame.image.load(direcao_relativa('imagens/loja.png'))
@@ -32,11 +38,13 @@ overlay_castelo = pygame.transform.scale(overlay_castelo, (tela_largura, tela_al
 imagem_de_fundo = pygame.image.load(direcao_relativa('imagens/game map.png'))
 imagem_de_fundo = pygame.transform.scale(imagem_de_fundo, (tela_largura, tela_altura))
 
+# Carrega sprites do player (andar, ataque, machucado e morte)
 player_folha_sprites = pygame.image.load(direcao_relativa('animação/jogador/Sword_Walk_full.png'))
 player_ataque_sprites = pygame.image.load(direcao_relativa('animação/jogador/Sword_attack_full.png'))
 player_machucado_sprites = pygame.image.load(direcao_relativa('animação/jogador/Sword_Hurt_full.png'))
 player_morto_sprites = pygame.image.load(direcao_relativa('animação/jogador/Sword_Death_full.png'))
 
+# Carrega sprites das flechas
 flecha_cima = pygame.image.load(direcao_relativa('itens/flecha_cima.png')).convert_alpha()
 flecha_cima = pygame.transform.scale(flecha_cima, (46, 70))
 
@@ -49,6 +57,7 @@ flecha_esquerda = pygame.transform.scale(flecha_esquerda, (70, 46))
 flecha_direita = pygame.image.load(direcao_relativa('itens/flecha_direita.png')).convert_alpha()
 flecha_direita = pygame.transform.scale(flecha_direita, (70, 46))
 
+# Carrega sprites dos inimigos (orc e vampiros)
 orc1_machucado_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc1_hurt_full.png'))
 orc1_ataque_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc1_attack_full.png'))
 orc1_corpo_sprites = pygame.image.load(direcao_relativa('animação/inimigo/orc1_walk_full.png'))
@@ -79,12 +88,13 @@ vampiro3_ataque_sprites = pygame.image.load(direcao_relativa('animação/inimigo
 vampiro3_machucado_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires3_Hurt_full.png'))
 vampiro3_morte_sprites = pygame.image.load(direcao_relativa('animação/inimigo/Vampires3_Death_full.png'))
 
+# Carrega sprites dos itens (moeda e barril)
 imagem_moeda = pygame.image.load(direcao_relativa('itens/coin.png'))
 imagem_moeda = pygame.transform.scale(imagem_moeda, (32, 32))
 imagem_barril = pygame.image.load(direcao_relativa('itens/barrel.png'))
 imagem_barril = pygame.transform.scale(imagem_barril, (64, 64))
 
-
+# Sons do jogo
 pygame.mixer.music.load('Sons\Overworld_Hyrule.mp3') #Música de fundo em loop 
 pygame.mixer.music.play(loops=-1)
 
@@ -95,6 +105,9 @@ hit_orc_som = pygame.mixer.Sound('Sons\orc_hit.mp3')
 vampiro_hiss = pygame.mixer.Sound('Sons\hiss.mp3')
 explosao_som = pygame.mixer.Sound('Sons\explosion.mp3')
 boss_fight = pygame.mixer.Sound('Sons\Boss_fight_zelda.mp3')
+
+# - Carregamento dos frames de animação (andar, atacar, machucado, morrer)
+
 
 def carrega_orc_frames(sheet, largura_frame=64, altura_frame=64, escala=4, linhas=4, colunas=6):
     direcoes = ['baixo', 'cima', 'esquerda', 'direita']
@@ -168,6 +181,9 @@ vampiro3_andando_frames = carrega_orc_frames(vampiro3_andando_sprites)
 vampiro3_ataque_frames = carrega_orc_frames(vampiro3_ataque_sprites)
 vampiro3_machucado_frames = carrega_orc_frames(vampiro3_machucado_sprites, colunas=4)
 vampiro3_morte_frames = carrega_orc_frames(vampiro3_morte_sprites, colunas=11)
+
+# Definição das classes: ItemDropado, Orcs, Vampiros e Bosses
+
 
 class itemdropado:
     def __init__(atributo, x, y, tipo_item,caindo=False):
@@ -356,7 +372,7 @@ class OrcBase:
             atributo.frame_index = 0
             atributo.morto_timer = pygame.time.get_ticks()
 
-
+#Orcs
 class Orc1Enemy(OrcBase):
     def __init__(atributo, x, y):
         atributo.velocidade = 2
@@ -483,7 +499,7 @@ class VampiroBoss(OrcBase):
             atributos.na_sequencia_de_ataque = True
             atributos.tempo_do_ultimo_ataque = now
 
-
+    #Desenhando a barra de vida
     def barra_vida(atributo, superficie):
         largura_barra = 600
         bar_height = 25
@@ -493,6 +509,7 @@ class VampiroBoss(OrcBase):
         filled = int((atributo.hp / atributo.max_hp) * largura_barra)
         pygame.draw.rect(superficie, (221, 160, 221), (bar_x, bar_y, filled, bar_height))
     
+    #Desenhando o ataque especial
     def desenha_ataque_especial(atributo, superficie):
         for linha in atributo.linhas_ataque_especial:
             pygame.draw.line(
@@ -502,6 +519,8 @@ class VampiroBoss(OrcBase):
                 (linha['end_x'], linha['end_y']),
                 3
             )
+
+# Bosses
 
 class Vampiro1Boss(VampiroBoss):
     def __init__(atributo, x, y):
@@ -557,6 +576,7 @@ def gerar_orcs_em_faixas(qtd=3):
         orcs.append(orc)
     return orcs
 
+# Definição do estado do jogo (vida, dinheiro, wave, etc)
 class estado_de_jogo:
     player_y_comeco = tela_altura - 150
     dinheiro_total = 0
@@ -598,6 +618,7 @@ class estado_de_jogo:
     hp_max_castelo = 2000
     imune_a_explosao = False
 
+#Vida do castelo
 def vida_castelo(superficie):
     largura_barra = 600
     altura_barra = 25
@@ -615,6 +636,7 @@ explosoes = []
 efeitos_especiais = []
 moedas_ceu = []
 
+#HUD
 def HUD(superficie):
     hp_porcentagem = min(estado_de_jogo.HP / estado_de_jogo.max_HP, 1.0)
     hp_largura_barra = int(300 * hp_porcentagem)
@@ -635,6 +657,7 @@ def HUD(superficie):
     superficie.blit(texto_armas, (20, 120))
     superficie.blit(texto_wave, (20, 150))
 
+#Tela de Game Over
 def game_over_tela():
     tela.fill((0, 0, 0))
     fonte = pygame.font.Font(direcao_relativa('fonte/8BIT WONDER.ttf'), 60)
@@ -712,6 +735,7 @@ def game():
     estado_de_jogo.arma = 'espada'
     estado_de_jogo.velocidade_player = 5
 
+    #Loop principal do jogo
     while funcionando:
         if estado_de_jogo.onda == 3 or estado_de_jogo.onda == 6 or estado_de_jogo.onda == 9:
             boss_fight.play()
@@ -1213,9 +1237,11 @@ def game():
         vida_castelo(tela)
         pygame.display.flip()
 
+#Explosão do barril
 def cria_explosao(x, y, raio, dano):
     explosoes.append({'x': x,'y': y,'radius': raio * 1.5,'dano': dano,'timer': pygame.time.get_ticks(),'duration': 500})
 
+#Spawn de moedas
 def nasce_moeda_ceu():
     faixa = random.choice(faixas_x)
     x = faixa - 16
@@ -1272,6 +1298,7 @@ def atualiza_tiros(dt, orcs):
                 tiros.remove(tiro)
             continue
 
+#Mostrando a loja na tela entre as ondas
 def mostra_loja():
     loja_ativa = True
     opcoes = [
@@ -1327,6 +1354,7 @@ def mostra_loja():
                             elif opcao['name'].startswith("Reparar Castelo"):
                                 estado_de_jogo.hp_castelo = min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)
 
+#Tela de início do jogo
 def start_tela():
     while estado_de_jogo.game_start_tela:
         tela.blit(tela_de_inicio, (0, 0))
