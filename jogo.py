@@ -1279,3 +1279,58 @@ def atualiza_tiros(dt, orcs):
             if tiro in tiros:
                 tiros.remove(tiro)
             continue
+
+def mostra_loja():
+    loja_ativa = True
+    opcoes = [
+        {"name": "Aumentar Vida (+50)", "cost": 10, "action": lambda: setattr(estado_de_jogo, 'HP', min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50))},
+        {"name": "Recuperar Vida", "cost": 5, "action": lambda: setattr(estado_de_jogo, 'HP', estado_de_jogo.max_HP)},
+        {"name": "Mais Flechas (+10)", "cost": 8, "action": lambda: setattr(estado_de_jogo, 'flechas', estado_de_jogo.flechas + 10)},
+        {"name": "Aumentar Velocidade", "cost": 15, "action": lambda: setattr(estado_de_jogo, 'player_velocidade', estado_de_jogo.velocidade_player + 0.5)},
+        {"name": "Aumentar Area da Espada", "cost": 12, "action": lambda: setattr(estado_de_jogo, 'sword_range', estado_de_jogo.alcance_espada + 20)},
+        {"name": "Reparar Castelo (+500)", "cost": 20, "action": lambda: min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)}
+    ]
+    
+    if not estado_de_jogo.imune_a_explosao:
+        opcoes.append({
+            "name": "Imunidade Permanente a Explosões", 
+            "cost": 50, 
+            "action": lambda: [setattr(estado_de_jogo, 'immune_to_explosions', True)]})
+
+    opcao_fonte = pygame.font.Font(direcao_relativa('Font/8BIT WONDER.ttf'), 30)
+
+    while loja_ativa:
+        tela.blit(loja, (0, 0))
+        moedas_texto = opcao_fonte.render(f"Moedas* {estado_de_jogo.moedas_ganhas}", True, (255, 255, 0))  # Amarelo
+        tela.blit(moedas_texto, (tela_largura // 2 - moedas_texto.get_width() // 2 + 4, 210))
+        pygame.display.flip()
+
+        opcao_espaco = 40
+        comeco_y = 150
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_ESCAPE:
+                    loja_ativa = False
+                elif evento.key in (pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7):
+                    opcao_index = evento.key - pygame.K_1
+                    if opcao_index < len(opcoes):
+                        opcao = opcoes[opcao_index]
+                        if estado_de_jogo.moedas_ganhas >= opcao['cost']:
+                            estado_de_jogo.moedas_ganhas -= opcao['cost']
+                            resultado = opcao['action']()
+
+                            texto_de_feedback = opcao_fonte.render(f"Comprado: {opcao['name']}", True, (0, 255, 0))
+                            tela.blit(texto_de_feedback, (tela_largura // 2 - texto_de_feedback.get_width() // 2, comeco_y + len(opcoes)*opcao_espaco + 380))
+                            pygame.display.flip()
+                            pygame.time.delay(1500) 
+
+                            if opcao['name'].startswith("Aumentar Vida"):
+                                estado_de_jogo.HP = min(estado_de_jogo.max_HP, estado_de_jogo.HP + 50)
+                            elif opcao['name'].startswith("Recuperar Vida"):
+                                estado_de_jogo.HP = estado_de_jogo.max_HP
+                            elif opcao['name'].startswith("Reparar Castelo"):
+                                estado_de_jogo.hp_castelo = min(estado_de_jogo.hp_castelo + 500, estado_de_jogo.hp_max_castelo)
