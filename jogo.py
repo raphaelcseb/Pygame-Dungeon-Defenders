@@ -242,9 +242,6 @@ class itemdropado:
         elif proprio.tipo == "barril":
             superficie.blit(imagem_barril, proprio.rect.topleft)
 
-        if show_hitbox:
-            pygame.draw.rect(superficie, (0, 255, 0), proprio.rect, 2)
-
 class OrcBase:
     def __init__(atributo, x, y):
         atributo.x = x
@@ -335,9 +332,6 @@ class OrcBase:
             debug_frame = pygame.Surface((128, 128))
             debug_frame.fill((255, 0, 0))
             superficie.blit(debug_frame, (atributo.x, atributo.y))
-            if show_hitbox:
-                rect = pygame.Rect(atributo.x + 64, atributo.y + 64, 128, 128)
-                pygame.draw.rect(superficie, (0, 255, 0), rect, 2)
             return
         frame_index = min(int(atributo.frame_index), len(frame_list) - 1)
         frame = frame_list[frame_index]
@@ -349,10 +343,6 @@ class OrcBase:
             superficie.blit(temp_superficie, (atributo.x, atributo.y))
         else:
             superficie.blit(frame, (atributo.x, atributo.y))
-
-        if show_hitbox:
-            rect = pygame.Rect(atributo.x + 64, atributo.y + 64, 128, 128)
-            pygame.draw.rect(superficie, (0, 255, 0), rect, 2)
 
     def set_animacao(atributo, tipo):
         if atributo.morto:
@@ -792,7 +782,6 @@ def game():
                                 largura_ataque,
                                 altura_ataque
                             )
-                            pygame.draw.rect(tela, (255, 255, 0), ataque_rect, 2)
                             estado_de_jogo.atacando = True
                             estado_de_jogo.ataque_timer = pygame.time.get_ticks()
                             estado_de_jogo.ataque_frame_index = 0
@@ -804,7 +793,6 @@ def game():
                                 largura_ataque,
                                 altura_ataque
                             )
-                            pygame.draw.rect(tela, (255, 255, 0), ataque_rect, 2)
                             estado_de_jogo.atacando = True
                             estado_de_jogo.ataque_timer = pygame.time.get_ticks()
                             estado_de_jogo.ataque_frame_index = 0
@@ -816,7 +804,6 @@ def game():
                                 altura_ataque,
                                 largura_ataque
                             )
-                            pygame.draw.rect(tela, (255, 255, 0), ataque_rect, 2)
                             estado_de_jogo.atacando = True
                             estado_de_jogo.ataque_timer = pygame.time.get_ticks()
                             estado_de_jogo.ataque_frame_index = 0
@@ -828,7 +815,6 @@ def game():
                                 altura_ataque,
                                 largura_ataque
                             )
-                            pygame.draw.rect(tela, (255, 255, 0), ataque_rect, 2)
                             estado_de_jogo.atacando = True
                             estado_de_jogo.ataque_timer = pygame.time.get_ticks()
                             estado_de_jogo.ataque_frame_index = 0
@@ -938,7 +924,7 @@ def game():
                     itens_dropados.remove(item)
                     estado_de_jogo.moedas_ganhas += 1
                     continue
-            item.draw(tela, show_hitbox=True)
+            item.draw(tela, show_hitbox=False)
 
         for moeda_do_ceu in moedas_ceu[:]:
             if not moeda_do_ceu.update():
@@ -948,7 +934,7 @@ def game():
                 moedas_ceu.remove(moeda_do_ceu)
                 estado_de_jogo.moedas_ganhas += 1
                 continue
-            moeda_do_ceu.draw(tela, show_hitbox=True)
+            moeda_do_ceu.draw(tela, show_hitbox=False)
 
         for orc in sorted(orcs, key=lambda o: o.y):
             if orc.morto:
@@ -1032,7 +1018,7 @@ def game():
 
         for entidade in sorted(desenhaveis, key=lambda e: e['y']):
             if entidade['type'] == 'orc':
-                entidade['obj'].draw(tela, show_hitbox=True)
+                entidade['obj'].draw(tela, show_hitbox=False)
             elif entidade['type'] == 'player':
                 tela.blit(entidade['obj'], (player_x - 60, player_y - 40))
 
@@ -1171,8 +1157,6 @@ def game():
             aura_superficie = pygame.Surface((raio_aura * 2, raio_aura * 2), pygame.SRCALPHA)
             pygame.draw.circle(aura_superficie, (255, 255, 0, 40), (raio_aura, raio_aura), raio_aura - 5)
             tela.blit(aura_superficie, (centro_x - raio_aura, centro_y - raio_aura))
-
-        pygame.draw.rect(tela, (255, 0, 0), player_hitbox, 2)
 
         HUD(tela)
 
