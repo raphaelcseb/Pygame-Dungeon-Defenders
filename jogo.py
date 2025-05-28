@@ -742,7 +742,7 @@ def game():
     ultimo_spawn_moeda_ceu = pygame.time.get_ticks()
     intervalo_moeda_ceu = 10000 
     estado_de_jogo.imune_a_explosao = False
-    dano_intervalo = 100
+    dano_intervalo = 600
     cooldown_ataque = 500
     ultimo_ataque = 0
     relogio = pygame.time.Clock()
@@ -1265,8 +1265,6 @@ def game():
 
 
             pygame.draw.circle(tela, (255, 0, 0), (int(efeito['x']), int(efeito['y'])), 6)
-            pygame.draw.rect(tela, (0, 0, 255), pygame.Rect(efeito['x'], efeito['y'], 12, 12), 2)
-
         
         tela.blit(overlay_castelo, (0, tela_altura - overlay_castelo.get_height()))
         vida_castelo(tela)
