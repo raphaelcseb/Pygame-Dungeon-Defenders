@@ -715,9 +715,13 @@ def game():
     estado_de_jogo.arma = 'espada'
     estado_de_jogo.velocidade_player = 5
 
-    pygame.mixer.music.play(loops=-1)
-
     while funcionando:
+        if estado_de_jogo.onda == 1:
+            tocar_overworld()
+        elif estado_de_jogo.onda == 3 or estado_de_jogo.onda == 6 or estado_de_jogo.onda == 9:
+            tocar_boss()
+        elif estado_de_jogo.onda == 4 or estado_de_jogo.onda == 7:
+            tocar_overworld()
         if estado_de_jogo.player_morto:
             if pygame.time.get_ticks() - estado_de_jogo.player_morto_timer >= estado_de_jogo.player_morto_duracao:
                 game_over_tela()
