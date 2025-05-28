@@ -1,7 +1,8 @@
 # Pygame-Dungeon-Defenders
 # Membros do grupo - Daniel Gozzi Fernandes, Diego Freire Leme de Almeida e Raphael Cintra Silva Eloy Bagnariolli
 
-### Como rodar o jogo  Para rodar o jogo é necessário apenas apertar o botão de 'run' no canto superior direito da tela
+### Como rodar o jogo  
+Para rodar o jogo é necessário apenas apertar o botão de 'run' no canto superior direito da tela, ou abrir um terminal e digitar "python jogo.py"
 
 ### Comandos:
 Trocar de arma: 
@@ -11,11 +12,12 @@ Atacar: Apertar espaço
 Comprar itens na loja: Apertar número corresponde ao do item no teclado
 Movimento: Setas
 
-### Link do Video apresentando o jogo - 
+### Link do Video apresentando o jogo - https://youtu.be/gHB1BvkXBng
 
-### No jogo Dungeon Defenders, você é um lutador com o objetivo de defender o castelo, localizado na parte inferior da tela. O castelo possui uma barra de vida: fique atento, pois, se ela chegar a zero, você perderá a partida. O jogo é composto de rodadas (waves); em cada rodada, nascem vários inimigos, e ela só acaba quando todos forem derrotados.
+### Apresentando o jogo
+No jogo Dungeon Defenders você é um lutador com o objetivo de defender o castelo, localizado na parte inferior da tela. O castelo possui uma barra de vida: fique atento, pois, se ela chegar a zero, você perderá a partida. O jogo é composto de rodadas (waves); em cada rodada, nascem vários inimigos, e ela só acaba quando todos forem derrotados.
 
-### Como lutador, você enfrentará orcs que tentarão matá-lo e destruir o castelo. No início, você possui duas armas: uma espada e um arco — porém, o arco não vem com flechas. As flechas podem ser adquiridas na loja, disponível entre as rodadas.
+Como lutador, você enfrentará orcs que tentarão matá-lo e destruir o castelo. No início, você possui duas armas: uma espada e um arco — porém, o arco não vem com flechas. As flechas podem ser adquiridas na loja, disponível entre as rodadas.
 
 ### Loja (acessível entre as rodadas)
 Na loja, você pode:
@@ -39,4 +41,11 @@ O ataque especial deles consiste em vários tiros que formam três rodadas, alte
 
 ### Créditos
 Música de fundo: 'Overworld - A link to the past' - Koji Kondo (Nintendo)
+
 Música da boss fight: 'Fight with Ganon - A link to the past' - Koji Kondo (Nintendo)
+
+Demais efeitos sonoros (sem copyright): Extraídos de pixabay.com 
+
+Sprites (sem copyright): Extraídas de craftpix.net
+
+Telas iniciais e de fundo: Criadas por meio de IA Generativa
